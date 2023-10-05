@@ -1,0 +1,47 @@
+CMakeLists.txt.user*
+*~
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*_pch.h.cpp
+*_resource.rc
+*.ts
+.#*
+*.*#
+.DS_Store
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Thumbs.db
+*.pb.*
+unittest
+
+# qtcreator generated files
+*.pro.user*
+*.qmlproject.user*
+*.pluginspec
+
+# openapi generated files
+openapitools.json
+
+#ignore the doc directory
+doc/*
+doc/
+
+
+# per user project includes
+*.user.pri
+
+# ignore build output
+bin/*
+libs/*
