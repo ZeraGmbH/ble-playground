@@ -4,6 +4,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+
 file(GLOB SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
@@ -14,6 +15,7 @@ file(GLOB HEADERS
 
 include_directories(
     ${Qt5Core_INCLUDE_DIRS}
+    ${Qt5Bluetooth_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -21,9 +23,12 @@ link_directories(
 )
 
 add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
+
+
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
     Qt5Core
+    Qt5Bluetooth
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -41,4 +46,3 @@ install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-
