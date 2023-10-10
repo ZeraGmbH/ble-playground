@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     discoveryAgent->setLowEnergyDiscoveryTimeout(0);  // 0 = endless
 
-    for (int i = 1; i <= 240; i++)
+    for (int i = 1; i <= 600; i++)
     {
         discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
         int n = 2;
@@ -41,8 +41,6 @@ int main(int argc, char *argv[])
                     measureCntAct += bleDevInfIter->manufacturerData(ManufId)[6];
                     measureCntAct *= 256;
                     measureCntAct += bleDevInfIter->manufacturerData(ManufId)[7];
-                    //std::cout << "MeasureCnt: " << QString::number(measureCntAct).toStdString() << std::endl;
-                    std::cout << "ManufId[7]: " << QString::number(bleDevInfIter->manufacturerData(ManufId)[7]).toStdString() << std::endl;
 
                     if (measureCntOld == 0x00)      // first pass..
                         measureCntOld = measureCntAct;
@@ -54,7 +52,7 @@ int main(int argc, char *argv[])
                         temperature += bleDevInfIter->manufacturerData(ManufId)[15];
                         temperature /= 100;
                         temperature -= 150;
-                        std::cout << "New Temp: " << temperature << "°C  Seconds: " << i << std::endl;
+                        std::cout << "Temperature: " << temperature << "    Seconds: " << i << std::endl;
                     }
                 }
             }
