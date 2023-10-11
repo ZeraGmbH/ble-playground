@@ -72,10 +72,28 @@ bool EfentoSensor::checkMsgValid()
     return true;
 }
 
+unsigned char EfentoSensor::getSensorType(unsigned char slot)
+{
+    unsigned char ret;
+    switch (slot)
+    {
+    case m_sensorSlot1:
+        ret = m_manufactureData[11];
+        break;
+    case m_sensorSlot2:
+        ret = m_manufactureData[12];
+        break;
+    case m_sensorSlot3:
+        ret = m_manufactureData[13];
+        break;
+    default:
+        ret = m_sensorTypeNone;
+    }
+    return ret;
+}
 
 signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1/1000 °C e.g. -5°C = -500
 {
-     //unsigned int hTemp = tempSensorError;
      signed int temperature = -9999;
 
      unsigned int temperatureRaw;
@@ -96,10 +114,10 @@ signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1
                temperatureRaw += m_manufactureData[19];
                break;
           default:
-               m_errorFlags |= 0x01;
+               m_errorFlags |= m_errorTempUnvalidSlot;
      }
 
-     if (temperatureRaw <= m_maxTemperatureValue)
+     if (temperatureRaw <= m_TemperatureValueMax)
      {
           temperature = temperatureRaw;
           temperature -= m_temperatureOffeset;
@@ -115,6 +133,53 @@ signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1
      }
      return temperature;
 }
+
+
+
+unsigned char EfentoSensor::getHumidity(unsigned char slot)
+{
+    unsigned char humidity = 99;
+
+    switch (slot) {
+         case m_sensorSlot1:
+              humidity = m_manufactureData[15];
+              break;
+         case m_sensorSlot2:
+              humidity = m_manufactureData[17];
+              break;
+         case m_sensorSlot3:
+              humidity = m_manufactureData[19];
+              break;
+         default:
+              m_errorFlags |= m_errorHumidUnvalidSlot;
+    }
+
+    if ((humidity >= m_HumidityFutureUseMin) && (humidity <= m_HumidityFutureUseMax))
+         m_errorFlags |= m_errorHumidEfFuturUse;
+
+    else if (humidity == m_errEfentoHumidityOutOfRange)
+          m_errorFlags |= m_errorHumidEfOutOfRange;
+
+     else if (humidity == m_errEfentoHumiditySensorError)
+          m_errorFlags |= m_errorHumidEfSensorError;
+
+     else if (humidity == m_errEfentoHumidityNoMeasurement)
+          m_errorFlags |= m_errorHumidEfNoMeasurment;
+
+     return humidity;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 bool EfentoSensor::isErrorAtive()
 {

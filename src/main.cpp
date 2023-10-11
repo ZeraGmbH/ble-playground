@@ -4,6 +4,7 @@
 #include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
 #include <unistd.h>
 #include <memory>
+#include <qdebug.h>
 #include "efentosensor.h"
 
 int main(int argc, char *argv[])
@@ -17,11 +18,13 @@ int main(int argc, char *argv[])
     quint32 measureCntAct;
     quint32 measureCntOld = 0;
     qint32  temperature;
+    quint8  humidity;
     quint8  discoverCnt = 0;
 
     std::unique_ptr<QBluetoothDeviceDiscoveryAgent> discoveryAgent = std::make_unique<QBluetoothDeviceDiscoveryAgent>();
     QList<QBluetoothDeviceInfo> bleDeviceInfo;
     QList<QBluetoothDeviceInfo>::iterator bleDevInfIter;
+    QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");
 
     discoveryAgent->setLowEnergyDiscoveryTimeout(0);  // 0 = endless
 
@@ -29,9 +32,10 @@ int main(int argc, char *argv[])
     {
         discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
         bleDeviceInfo = discoveryAgent->discoveredDevices();
+
         for (bleDevInfIter = bleDeviceInfo.begin(); bleDevInfIter != bleDeviceInfo.end(); ++bleDevInfIter)
         {
-            if (bleDevInfIter->name() == "EfentoSensor")
+            if (bleDevInfIter->address() == bleSensorAddress)
             {
                 EfentoSensor* sensor = new EfentoSensor(bleDevInfIter->manufacturerData(ManufId).constData());
                 if (sensor->checkMsgValid())
@@ -40,35 +44,24 @@ int main(int argc, char *argv[])
                     if (measureCntAct != measureCntOld)
                     {
                         measureCntOld = measureCntAct;
-                        if (discoverCnt < 30)
+                        if (discoverCnt < 15)
                             discoverCnt += 15;
-                        temperature = sensor->getTemperatur(1);
+                        if (sensor->getSensorType(EfentoSensor::m_sensorSlot1) == EfentoSensor::m_sensorTypeTemperatur)
+                            temperature = sensor->getTemperatur(EfentoSensor::m_sensorSlot1);
+                        if (sensor->getSensorType(EfentoSensor::m_sensorSlot2) == EfentoSensor::m_sensorTypeHumidity)
+                            humidity = sensor->getHumidity(EfentoSensor::m_sensorSlot2);
+                        else
+                            std::cout << "no humidty available" << std::endl;
+
                         std::cout << "measureCntAct: " << std::to_string(measureCntAct) << "  Temperature: " << temperature << "  Seconds: " << i << std::endl;
                         if (sensor->isErrorAtive())
                             std::cout << "Error is active! -> " << sensor->m_errorFlags << std::endl;
                     }
-
                 }
                 else
                 {
                     std::cout << "Sensor data not valid!" << std::endl;
                 }
-
-
-                /*
-                if (measureCntOld == 0x00)      // first pass..
-                    measureCntOld = measureCntAct;
-                else if (measureCntOld != measureCntAct)
-                {
-                    measureCntOld = measureCntAct;
-                    float temperature = bleDevInfIter->manufacturerData(ManufId)[14];
-                    temperature *= 256;
-                    temperature += bleDevInfIter->manufacturerData(ManufId)[15];
-                    temperature /= 100;
-                    temperature -= 150;
-                    std::cout << "Temperature: " << temperature << "    Seconds: " << i << std::endl;
-                }
-                */
             }
         }
         QThread::msleep(1000);
@@ -77,8 +70,6 @@ int main(int argc, char *argv[])
             discoverCnt--;
         else
             std::cout << "search sensor..." << std::endl;
-
     }
-    std::cout << "..end!" << std::endl;
     return a.exec();
 }
