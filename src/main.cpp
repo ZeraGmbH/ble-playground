@@ -4,7 +4,6 @@
 #include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
 #include <unistd.h>
 #include <memory>
-#include <qdebug.h>
 #include "efentosensor.h"
 
 int main(int argc, char *argv[])
@@ -13,12 +12,13 @@ int main(int argc, char *argv[])
     std::cout << "Start..." << std::endl;
 
     const qint16 ManufId = 0x026C;
-    //const quint32 MeasureCntDev = 0xFFFFFF00;
 
     quint32 measureCntAct;
     quint32 measureCntOld = 0;
-    qint32  temperature;
-    quint8  humidity;
+    float  temperatureInC;
+    float  temperatureInF;
+    float  airPressure = 0.0;
+    quint8  humidity = 0;;
     quint8  discoverCnt = 0;
 
     std::unique_ptr<QBluetoothDeviceDiscoveryAgent> discoveryAgent = std::make_unique<QBluetoothDeviceDiscoveryAgent>();
@@ -47,13 +47,17 @@ int main(int argc, char *argv[])
                         if (discoverCnt < 15)
                             discoverCnt += 15;
                         if (sensor->getSensorType(EfentoSensor::m_sensorSlot1) == EfentoSensor::m_sensorTypeTemperatur)
-                            temperature = sensor->getTemperatur(EfentoSensor::m_sensorSlot1);
+                        {
+                            temperatureInC = sensor->getTemperaturInC(EfentoSensor::m_sensorSlot1);
+                            temperatureInF = sensor->getTemperaturInF();
+                        }
                         if (sensor->getSensorType(EfentoSensor::m_sensorSlot2) == EfentoSensor::m_sensorTypeHumidity)
                             humidity = sensor->getHumidity(EfentoSensor::m_sensorSlot2);
-                        else
-                            std::cout << "no humidty available" << std::endl;
+                        if (sensor->getSensorType(EfentoSensor::m_sensorSlot3)  == EfentoSensor::m_sensorTypeAirPressure)
+                            airPressure = sensor->getAirPressure(EfentoSensor::m_sensorSlot3);
 
-                        std::cout << "measureCntAct: " << std::to_string(measureCntAct) << "  Temperature: " << temperature << "  Seconds: " << i << std::endl;
+                        std::cout << "measureCnt: " << std::to_string(measureCntAct) << " Sec.: " << i << std::endl;
+                        std::cout << " -> Temp. (C): " << temperatureInC << "  Temp. (F): "  << temperatureInF << "  Humidity: " << std::to_string(humidity) << "%  AirPress: " << airPressure << " hPa" << std::endl;
                         if (sensor->isErrorAtive())
                             std::cout << "Error is active! -> " << sensor->m_errorFlags << std::endl;
                     }

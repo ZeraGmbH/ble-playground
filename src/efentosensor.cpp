@@ -92,9 +92,9 @@ unsigned char EfentoSensor::getSensorType(unsigned char slot)
     return ret;
 }
 
-signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1/1000 °C e.g. -5°C = -500
+float EfentoSensor::getTemperaturInC(unsigned char slot)
 {
-     signed int temperature = -9999;
+     m_temperaturInC = -9999.99;
 
      unsigned int temperatureRaw;
      switch (slot) {
@@ -119,8 +119,9 @@ signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1
 
      if (temperatureRaw <= m_TemperatureValueMax)
      {
-          temperature = temperatureRaw;
-          temperature -= m_temperatureOffeset;
+          m_temperaturInC = temperatureRaw;
+          m_temperaturInC -= m_temperatureOffeset;
+          m_temperaturInC /= 100;
      }
      else
      {
@@ -131,9 +132,22 @@ signed int EfentoSensor::getTemperatur(unsigned char slot)  // returns temp in 1
           else
                m_errorFlags |= m_errorTempOutOfRange;
      }
-     return temperature;
+
+     return m_temperaturInC;
 }
 
+
+float EfentoSensor::getTemperaturInF()
+{
+    if (m_temperaturInC == -9999.99)
+        m_temperaturInF = -9999.99;
+    {
+        m_temperaturInF = m_temperaturInC;
+        m_temperaturInF *= 1.8;
+        m_temperaturInF += 32.0;
+    }
+    return m_temperaturInF;
+}
 
 
 unsigned char EfentoSensor::getHumidity(unsigned char slot)
@@ -154,7 +168,7 @@ unsigned char EfentoSensor::getHumidity(unsigned char slot)
               m_errorFlags |= m_errorHumidUnvalidSlot;
     }
 
-    if ((humidity >= m_HumidityFutureUseMin) && (humidity <= m_HumidityFutureUseMax))
+    if ((humidity >= m_errEfentoHumidityFutureUseMin) && (humidity <= m_errEfentoHumidityFutureUseMax))
          m_errorFlags |= m_errorHumidEfFuturUse;
 
     else if (humidity == m_errEfentoHumidityOutOfRange)
@@ -170,7 +184,60 @@ unsigned char EfentoSensor::getHumidity(unsigned char slot)
 }
 
 
+float EfentoSensor::getAirPressure(unsigned char slot)
+{
+    unsigned long airPressureRaw;
 
+    m_airPressure = -9999.99;
+
+    unsigned int temperatureRaw;
+    switch (slot) {
+         case m_sensorSlot1:
+              airPressureRaw = m_manufactureData[14];
+              airPressureRaw <<= 8;
+              airPressureRaw += m_manufactureData[15];
+              break;
+         case m_sensorSlot2:
+              airPressureRaw = m_manufactureData[16];
+              airPressureRaw <<= 8;
+              airPressureRaw += m_manufactureData[17];
+              break;
+         case m_sensorSlot3:
+              airPressureRaw = m_manufactureData[18];
+              airPressureRaw <<= 8;
+              airPressureRaw += m_manufactureData[19];
+              break;
+         default:
+              m_errorFlags |= m_errorAirPressUnvalidSlot;
+    }
+
+    if (airPressureRaw <= m_airPrssureValueMax)
+    {
+        m_airPressure = airPressureRaw;
+        m_airPressure /= 10;
+    }
+    else
+    {
+        if ((airPressureRaw >= m_errEfentoAirPressureFutureUseMin) && (airPressureRaw <= m_errEfentoAirPressureFutureUseMax))
+             m_errorFlags |= m_errorAirPressEfFuturUse;
+
+         else if (airPressureRaw == m_errEfentoAirPressureOutOfRange)
+              m_errorFlags |= m_errorAirPressEfOutOfRange;
+
+         else if (airPressureRaw == m_errEfentoAirPressureSensorFail)
+              m_errorFlags |= m_errorAirPressEfSensorFail;
+
+         else if (airPressureRaw == m_errEfentoAirPressureNoMeasurement)
+              m_errorFlags |= m_errorAirPressEfNoMeasurment;
+    }
+
+    return m_temperaturInC;
+
+
+
+
+
+}
 
 
 
