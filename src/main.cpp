@@ -19,17 +19,19 @@ int main(int argc, char *argv[])
     float  temperatureInF;
     float  airPressure = 0.0;
     quint8  humidity = 0;;
-    quint8  discoverCnt = 0;
+    quint8  discoverCnt = 10;
+    quint8 secCnt = 0;
 
     std::unique_ptr<QBluetoothDeviceDiscoveryAgent> discoveryAgent = std::make_unique<QBluetoothDeviceDiscoveryAgent>();
     QList<QBluetoothDeviceInfo> bleDeviceInfo;
     QList<QBluetoothDeviceInfo>::iterator bleDevInfIter;
     QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");
 
-    discoveryAgent->setLowEnergyDiscoveryTimeout(0);  // 0 = endless
+    discoveryAgent->setLowEnergyDiscoveryTimeout(900);  // 0 = endless
 
-    for (int i = 1; i <= 500; i++)
+    while (1)
     {
+        secCnt++;
         discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
         bleDeviceInfo = discoveryAgent->discoveredDevices();
 
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
                         if (sensor->getSensorType(EfentoSensor::m_sensorSlot3)  == EfentoSensor::m_sensorTypeAirPressure)
                             airPressure = sensor->getAirPressure(EfentoSensor::m_sensorSlot3);
 
-                        std::cout << "measureCnt: " << std::to_string(measureCntAct) << " Sec.: " << i << std::endl;
+                        std::cout << "measureCnt: " << std::to_string(measureCntAct) << " Sec.: " << std::to_string(secCnt) << std::endl;
                         std::cout << " -> Temp. (C): " << temperatureInC << "  Temp. (F): "  << temperatureInF << "  Humidity: " << std::to_string(humidity) << "%  AirPress: " << airPressure << " hPa" << std::endl;
                         if (sensor->isErrorAtive())
                             std::cout << "Error is active! -> " << sensor->m_errorFlags << std::endl;
@@ -75,5 +77,6 @@ int main(int argc, char *argv[])
         else
             std::cout << "search sensor..." << std::endl;
     }
+    std::cout << "...end!" << std::endl;
     return a.exec();
 }

@@ -49,7 +49,10 @@ bool EfentoSensor::checkMsgValid()
     if ((m_manufactureData[1] & 0xF0) > 0)              // higher nibble must be 0x00
         m_errorFlags |= m_errorReserveBits;
 
-    if (m_manufactureData[10] != 0x00)                  // reserved and must be 0x00
+    if ((m_manufactureData[8] != m_MeasurePeriodUnit) || (m_manufactureData[9] != m_MeasurePeriodValue))
+        m_errorFlags |= m_errorMeasurementPeriod;
+
+    if (m_manufactureData[10] != m_ReserveToZero)       // reserved and must be 0x00
         m_errorFlags |= m_errorReserveToZero;
 
     if (m_manufactureData[11] > m_sensorTypeDiffPressure) // only a few sensortypes or non are valid

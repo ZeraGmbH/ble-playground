@@ -63,6 +63,7 @@ public:
     static constexpr unsigned long m_errorAirPressEfOutOfRange = 1<<17;     // Efento-ERR: 0xFFFD
     static constexpr unsigned long m_errorAirPressEfSensorFail = 1<<18;     // Efento-ERR: 0xFFFE
     static constexpr unsigned long m_errorAirPressEfNoMeasurment = 1<<19;   // Efento-ERR: 0xFFFF
+    static constexpr unsigned long m_errorMeasurementPeriod = 1<<20;
 
 private:
 
@@ -93,7 +94,9 @@ private:
 
     // constants
     static constexpr unsigned char m_dataVersion = 0x02;
-
+    static constexpr unsigned char m_MeasurePeriodUnit = 0x80;      // seconds
+    static constexpr unsigned char m_MeasurePeriodValue = 15;
+    static constexpr unsigned char m_ReserveToZero = 0;
     static constexpr unsigned char m_HumidityValueMax = 0x64;
     static constexpr unsigned int m_TemperatureValueMax = 0x7530;
     static constexpr unsigned int m_temperatureOffeset = 15000;
