@@ -29,6 +29,10 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
     Qt5Core
     Qt5Bluetooth
+    Qt5Network
+    Zera::VfEvent
+    Zera::VfTcp
+    Zera::VfConvenientCode
 )
 
 target_include_directories(${PROJECT_NAME}

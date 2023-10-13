@@ -12,8 +12,10 @@ set(CMAKE_AUTORCC ON)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Core Network REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(VeinFramework REQUIRED)
+find_package(ZenuxCore REQUIRED)
 
 write_basic_package_version_file(
     ${PROJECT_NAME}ConfigVersion.cmake
