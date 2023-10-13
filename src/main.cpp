@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <memory>
 #include "efentosensor.h"
+#include <tasksimpleveinsetter.h>
+#include "vn_networksystem.h"
+#include "vn_tcpsystem.h"
+#include "ve_eventhandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,8 +30,19 @@ int main(int argc, char *argv[])
     QList<QBluetoothDeviceInfo> bleDeviceInfo;
     QList<QBluetoothDeviceInfo>::iterator bleDevInfIter;
     QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");
-
     discoveryAgent->setLowEnergyDiscoveryTimeout(900);  // 0 = endless
+
+    VeinEvent::EventHandler eventHandler;
+    VeinNet::NetworkSystem netSystem;
+    VeinNet::TcpSystem tcpSystem;
+    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
+
+    cmdEventHandlerSystem = VfCmdEventHandlerSystem::create();
+    netSystem.setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH); //!!!!!
+    eventHandler.addSubsystem(&netSystem);
+    eventHandler.addSubsystem(&tcpSystem);
+    eventHandler.addSubsystem(cmdEventHandlerSystem.get());
+    tcpSystem.connectToServer("127.0.0.1", 12000);
 
     while (1)
     {
@@ -62,6 +77,17 @@ int main(int argc, char *argv[])
                         std::cout << " -> Temp. (C): " << temperatureInC << "  Temp. (F): "  << temperatureInF << "  Humidity: " << std::to_string(humidity) << "%  AirPress: " << airPressure << " hPa" << std::endl;
                         if (sensor->isErrorAtive())
                             std::cout << "Error is active! -> " << sensor->m_errorFlags << std::endl;
+
+                        TaskSimpleVeinSetterPtr taskSet = TaskSimpleVeinSetter::create(16, "TemperatureInC", temperatureInC,
+                                                                                       cmdEventHandlerSystem, 2000);
+                        bool receivedOk = false;
+                        int timeout=0;
+
+                        QObject::connect(taskSet.get(), &TaskTemplate::sigFinish, [&](bool ok, int taskId)
+                        {
+                            receivedOk = ok;
+                        });
+                        taskSet->start();
                     }
                 }
                 else
