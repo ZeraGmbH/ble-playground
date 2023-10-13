@@ -14,19 +14,19 @@ public:
     unsigned char   getHumidity(unsigned char slot);
     float           getAirPressure(unsigned char slot);
     bool            isErrorAtive();
+    unsigned long   getActError();
+    unsigned int    getActWarning();
 
-    unsigned char  m_softwareVerMaj;
-    unsigned char  m_softwareVerMin;
-    unsigned long  m_errorFlags;
+    unsigned char   m_softwareVerMaj;
+    unsigned char   m_softwareVerMin;
+    unsigned long   m_errorFlags;
+    unsigned int    m_warningFlags;
 
 
     /*
     bool           getBatteryLevelOK();
     bool           getEncryptionEnabled();
     bool           getStorageErrrorOccured();
-    unsigned char  getSensorType(unsigned char slot);
-    signed int     getTemperatur(unsigned char slot);  // returns temp in 1/1000 °C e.g. -5°C = -500
-    unsigned char  getHumidity(unsigned char slot);
     void           clearGlobalError();
     unsigned int   getGlobalError();
     */
@@ -42,7 +42,7 @@ public:
     static constexpr unsigned char m_sensorTypeDiffPressure = 4;
 
 
-    // Global Errors
+    // Global Errors and Warnings
     static constexpr unsigned long m_errorDataVersion = 1<<0;
     static constexpr unsigned long m_errorReserveBits = 1<<1;
     static constexpr unsigned long m_errorReserveToZero = 1<<2;
@@ -64,6 +64,8 @@ public:
     static constexpr unsigned long m_errorAirPressEfSensorFail = 1<<18;     // Efento-ERR: 0xFFFE
     static constexpr unsigned long m_errorAirPressEfNoMeasurment = 1<<19;   // Efento-ERR: 0xFFFF
     static constexpr unsigned long m_errorMeasurementPeriod = 1<<20;
+    static constexpr unsigned long m_warningLowBattery = 1<<0;
+    static constexpr unsigned long m_warningStorageError = 1<<1;
 
 private:
 
@@ -118,8 +120,6 @@ private:
     static constexpr unsigned int m_errEfentoAirPressureOutOfRange = 0xFFFD;
     static constexpr unsigned int m_errEfentoAirPressureSensorFail = 0xFFFE;
     static constexpr unsigned int m_errEfentoAirPressureNoMeasurement = 0xFFFF;
-
-
 
 };
 

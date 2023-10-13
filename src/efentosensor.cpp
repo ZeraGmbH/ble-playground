@@ -33,18 +33,25 @@ unsigned long EfentoSensor::getMeasurementCounter()
 bool EfentoSensor::checkMsgValid()
 {
     m_errorFlags = 0;
+    m_warningFlags = 0;
+
     if (m_manufactureData[0] != m_dataVersion)          // byte must be 0x02
         m_errorFlags |= m_errorDataVersion;
-
     m_softwareVerMaj = m_manufactureData[1];
     m_softwareVerMin = m_manufactureData[2];
 
     if (m_manufactureData[1] & 0x01)
+    {
         m_battLevelOK = true;
+        m_warningFlags |= m_warningLowBattery;
+    }
     if (m_manufactureData[1] & 0x02)
         m_encryptionEnable = true;
     if (m_manufactureData[1] & 0x04)
+    {
         m_storageErrorActive = true;
+        m_warningFlags |= m_warningStorageError;
+    }
 
     if ((m_manufactureData[1] & 0xF0) > 0)              // higher nibble must be 0x00
         m_errorFlags |= m_errorReserveBits;
@@ -233,23 +240,8 @@ float EfentoSensor::getAirPressure(unsigned char slot)
          else if (airPressureRaw == m_errEfentoAirPressureNoMeasurement)
               m_errorFlags |= m_errorAirPressEfNoMeasurment;
     }
-
     return m_temperaturInC;
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
 
 bool EfentoSensor::isErrorAtive()
 {
@@ -258,4 +250,13 @@ bool EfentoSensor::isErrorAtive()
     return false;
 }
 
+unsigned long EfentoSensor::getActError()
+{
+    return m_errorFlags;
+}
+
+unsigned int EfentoSensor::getActWarning()
+{
+    return m_warningFlags;
+}
 
