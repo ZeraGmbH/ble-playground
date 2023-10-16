@@ -13,7 +13,7 @@ public:
     float           getTemperaturInF();
     unsigned char   getHumidity(unsigned char slot);
     float           getAirPressure(unsigned char slot);
-    bool            isErrorAtive();
+    bool            isErrorActive();
     unsigned long   getActError();
     unsigned int    getActWarning();
 

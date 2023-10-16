@@ -79,6 +79,7 @@ bool EfentoSensor::checkMsgValid()
 
     if (m_errorFlags > 0)
         return false;
+
     return true;
 }
 
@@ -243,7 +244,7 @@ float EfentoSensor::getAirPressure(unsigned char slot)
     return m_temperaturInC;
 }
 
-bool EfentoSensor::isErrorAtive()
+bool EfentoSensor::isErrorActive()
 {
     if (m_errorFlags > 0)
         return true;

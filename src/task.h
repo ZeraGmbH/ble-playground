@@ -1,0 +1,49 @@
+#ifndef TASK_H
+#define TASK_H
+
+#include <QObject>
+#include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
+
+#include <tasksimpleveinsetter.h>
+#include "vn_networksystem.h"
+#include "vn_tcpsystem.h"
+#include "ve_eventhandler.h"
+
+
+class Task : public QObject
+{
+    Q_OBJECT
+public:
+    Task(QObject *parent = 0);
+    QBluetoothDeviceDiscoveryAgent *discoveryAgent;
+
+public slots:
+    void run();
+    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+
+private:
+    const qint16 ManufId = 0x026C;
+    quint32 measureCntAct;
+    quint32 measureCntOld = 0;
+    float  temperatureInC;
+    float  temperatureInF;
+    float  airPressure = 0.0;
+    quint8  humidity = 0;;
+    quint8  discoverCnt = 10;
+    quint8 secCnt = 0;
+    quint32 errorFlags = 0;
+    quint16 warningFlags = 0;
+
+
+    VeinEvent::EventHandler eventHandler;
+    VeinNet::NetworkSystem netSystem;
+    VeinNet::TcpSystem tcpSystem;
+    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
+
+
+
+signals:
+    void finished();
+};
+
+#endif // TASK_H
