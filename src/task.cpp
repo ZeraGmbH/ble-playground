@@ -14,86 +14,138 @@ Task::Task(QObject *parent) : QObject(parent) {
 
 void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 {
-    QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");  // only temperarture  protocoll 5.x
-    //QBluetoothAddress bleSensorAddress("28:2C:02:41:8C:B1");    // temperature, humidity, air pressure  protocoll 6.x
+    unsigned int retHlp;
+    //QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");  // only temperarture  protocoll 5.x
+    QBluetoothAddress bleSensorAddress("28:2C:02:41:8C:B1");    // temperature, humidity, air pressure  protocoll 6.x
+
+
 
     if (device.address() == bleSensorAddress)
     {
+
+        //std::cout << "MAC: " << device.address().toString().toStdString() << std::endl;
+
         EfentoSensor* sensor = new EfentoSensor(device.manufacturerData(ManufId).constData());
-        if (sensor->checkMsgValid())
+        //std::cout << "Frame: " << std::to_string(sensor->getFrameType()) << std::endl;
+        if (sensor->checkMsgType() == sensor->m_frameTypeMeasurement)
         {
-            measureCntAct = sensor->getMeasurementCounter();
-            if (measureCntAct != measureCntOld)
+            std::cout << "Measurement data OK:" << std::endl;
+            sensor->decodeMeasureValues();
+            if (sensor->m_errorFlags == 0x00)
             {
-                measureCntOld = measureCntAct;
-                if (discoverCnt < 15)
-                    discoverCnt += 15;
-                if (sensor->getSensorType(EfentoSensor::m_sensorSlot1) == EfentoSensor::m_sensorTypeTemperatur)
-                {
-                    temperatureInC = sensor->getTemperaturInC(EfentoSensor::m_sensorSlot1);
-                    temperatureInF = sensor->getTemperaturInF();
-                }
-                if (sensor->getSensorType(EfentoSensor::m_sensorSlot2) == EfentoSensor::m_sensorTypeHumidity)
-                    humidity = sensor->getHumidity(EfentoSensor::m_sensorSlot2);
-                if (sensor->getSensorType(EfentoSensor::m_sensorSlot3)  == EfentoSensor::m_sensorTypeAirPressure)
-                    airPressure = sensor->getAirPressure(EfentoSensor::m_sensorSlot3);
+                temperatureInC = sensor->getTemperaturInC();
+                temperatureInF = sensor->getTemperaturInF();
+                humidity = sensor->getHumidity();
+                airPressure = sensor->getAirPressure();
 
-                std::cout << "measureCnt: " << std::to_string(measureCntAct) << " Sec.: " << std::to_string(secCnt) << std::endl;
+                //std::cout << " -> Temp.(C): " << temperatureInC << "  Temp.(F)" << temperatureInF << std::endl;
                 std::cout << " -> Temp. (C): " << temperatureInC << "  Temp. (F): "  << temperatureInF << "  Humidity: " << std::to_string(humidity) << "%  AirPress: " << airPressure << " hPa" << std::endl;
-                if (sensor->isErrorActive())
-                {
-                    errorFlags = sensor->getActError();
-                    std::cout << "Error is active! -> " << errorFlags << std::endl;
-                }
-                errorFlags = 123; //sensor->getActError();
-                warningFlags = 234; //sensor->getActWarning();
 
-                TaskSimpleVeinSetterPtr taskSetTempC = TaskSimpleVeinSetter::create(16, "TemperatureInC", temperatureInC,
-                                                                               cmdEventHandlerSystem, 2000);
+                TaskSimpleVeinSetterPtr taskSetTempC = TaskSimpleVeinSetter::create(16, "TemperatureInC", temperatureInC, cmdEventHandlerSystem, 2000);
                 std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempC = std::move(taskSetTempC);
-
-                TaskSimpleVeinSetterPtr taskSetTempF = TaskSimpleVeinSetter::create(16, "TemperatureInF", temperatureInF,
-                                                                               cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempF = std::move(taskSetTempF);
-
-                TaskSimpleVeinSetterPtr taskSetErrorFlags = TaskSimpleVeinSetter::create(16, "Errors", errorFlags,
-                                                                               cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrErrorFlags = std::move(taskSetErrorFlags);
-
-                TaskSimpleVeinSetterPtr taskSetWarningFlags = TaskSimpleVeinSetter::create(16, "Warnings", warningFlags,
-                                                                               cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrWarningFlags = std::move(taskSetWarningFlags);
-
 
                 QObject::connect(taskSharedPtrTempC.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempC](bool ok, int taskId)
                 {
-                    std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl;
+                    //std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl;
                 });
                 taskSharedPtrTempC->start();
-
-                QObject::connect(taskSharedPtrTempF.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempF](bool ok, int taskId)
-                {
-                    std::cout << "successful: taskSharedPtrTempF" << ok << std::endl;
-                });
-                taskSharedPtrTempF->start();
-
-                QObject::connect(taskSharedPtrErrorFlags.get(), &TaskTemplate::sigFinish, [taskSharedPtrErrorFlags](bool ok, int taskId)
-                {
-                    std::cout << "successful: taskSharedPtrErrorFlags" << ok << std::endl;
-                });
-                taskSharedPtrErrorFlags->start();
-
-                QObject::connect(taskSharedPtrWarningFlags.get(), &TaskTemplate::sigFinish, [taskSharedPtrWarningFlags](bool ok, int taskId)
-                {
-                    std::cout << "successful: taskSharedPtrWarningFlags" << ok << std::endl;
-                });
-                taskSharedPtrWarningFlags->start();
             }
+            else
+                std::cout << "ERROR decoding! " << std::endl;
+        }
+        else if (sensor->checkMsgType() == sensor->m_frameTypeAdvertisement)
+        {
+            sensor->decodeAdvertiseValues();
+            if (sensor->m_errorFlags == 0x00)
+            {
+                std::cout << "Advertisment data OK:" << std::endl;
+                lastMeasureTS = sensor->getLastMeasureTS();
+                std::cout << " -> Measure TS: " << std::to_string(lastMeasureTS) << std::endl;
+
+            }
+            else
+                std::cout << "Advertisment data ERROR!" << std::endl;
         }
         else
-        {
-            std::cout << "Sensor data not valid!" << std::endl;
-        }
+            std::cout << "no measurement frame" << std::endl;
+
+
+//        if (sensor->checkMsgValid())
+//        {
+//            measureCntAct = sensor->getMeasurementCounter();
+//            if (measureCntAct != measureCntOld)
+//            {
+//                measureCntOld = measureCntAct;
+//                if (discoverCnt < 15)
+//                    discoverCnt += 15;
+//                if (sensor->getSensorType(EfentoSensor::m_sensorSlot1) == EfentoSensor::m_sensorTypeTemperatur)
+//                {
+//                    temperatureInC = sensor->getTemperaturInC(EfentoSensor::m_sensorSlot1);
+//                    temperatureInF = sensor->getTemperaturInF();
+//                }
+//                if (sensor->getSensorType(EfentoSensor::m_sensorSlot2) == EfentoSensor::m_sensorTypeHumidity)
+//                    humidity = sensor->getHumidity(EfentoSensor::m_sensorSlot2);
+//                if (sensor->getSensorType(EfentoSensor::m_sensorSlot3)  == EfentoSensor::m_sensorTypeAirPressure)
+//                    airPressure = sensor->getAirPressure(EfentoSensor::m_sensorSlot3);
+
+//                std::cout << "measureCnt: " << std::to_string(measureCntAct) << " Sec.: " << std::to_string(secCnt) << std::endl;
+//                std::cout << " -> Temp. (C): " << temperatureInC << "  Temp. (F): "  << temperatureInF << "  Humidity: " << std::to_string(humidity) << "%  AirPress: " << airPressure << " hPa" << std::endl;
+//                if (sensor->isErrorActive())
+//                {
+//                    errorFlags = sensor->getActError();
+//                    std::cout << "Error is active! -> " << errorFlags << std::endl;
+//                }
+//                errorFlags = 123; //sensor->getActError();
+//                warningFlags = 234; //sensor->getActWarning();
+
+//                TaskSimpleVeinSetterPtr taskSetTempC = TaskSimpleVeinSetter::create(16, "TemperatureInC", temperatureInC,
+//                                                                               cmdEventHandlerSystem, 2000);
+//                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempC = std::move(taskSetTempC);
+
+//                TaskSimpleVeinSetterPtr taskSetTempF = TaskSimpleVeinSetter::create(16, "TemperatureInF", temperatureInF,
+//                                                                               cmdEventHandlerSystem, 2000);
+//                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempF = std::move(taskSetTempF);
+
+//                TaskSimpleVeinSetterPtr taskSetErrorFlags = TaskSimpleVeinSetter::create(16, "Errors", errorFlags,
+//                                                                               cmdEventHandlerSystem, 2000);
+//                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrErrorFlags = std::move(taskSetErrorFlags);
+
+//                TaskSimpleVeinSetterPtr taskSetWarningFlags = TaskSimpleVeinSetter::create(16, "Warnings", warningFlags,
+//                                                                               cmdEventHandlerSystem, 2000);
+//                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrWarningFlags = std::move(taskSetWarningFlags);
+
+
+//                QObject::connect(taskSharedPtrTempC.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempC](bool ok, int taskId)
+//                {
+//                    std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl;
+//                });
+//                taskSharedPtrTempC->start();
+
+//                QObject::connect(taskSharedPtrTempF.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempF](bool ok, int taskId)
+//                {
+//                    std::cout << "successful: taskSharedPtrTempF" << ok << std::endl;
+//                });
+//                taskSharedPtrTempF->start();
+
+//                QObject::connect(taskSharedPtrErrorFlags.get(), &TaskTemplate::sigFinish, [taskSharedPtrErrorFlags](bool ok, int taskId)
+//                {
+//                    std::cout << "successful: taskSharedPtrErrorFlags" << ok << std::endl;
+//                });
+//                taskSharedPtrErrorFlags->start();
+
+//                QObject::connect(taskSharedPtrWarningFlags.get(), &TaskTemplate::sigFinish, [taskSharedPtrWarningFlags](bool ok, int taskId)
+//                {
+//                    std::cout << "successful: taskSharedPtrWarningFlags" << ok << std::endl;
+//                });
+//                taskSharedPtrWarningFlags->start();
+//            }
+//        }
+//        else
+//        {
+//            std::cout << "Sensor data not valid!" << std::endl;
+//        }
+
+
     }
 }
 
