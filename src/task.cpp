@@ -150,12 +150,12 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 void Task::run()
 {
 
-    cmdEventHandlerSystem = VfCmdEventHandlerSystem::create();
-    netSystem.setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH); //!!!!!
-    eventHandler.addSubsystem(&netSystem);
-    eventHandler.addSubsystem(&tcpSystem);
-    eventHandler.addSubsystem(cmdEventHandlerSystem.get());
-    tcpSystem.connectToServer("127.0.0.1", 12000);
+//    cmdEventHandlerSystem = VfCmdEventHandlerSystem::create();
+//    netSystem.setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH); //!!!!!
+//    eventHandler.addSubsystem(&netSystem);
+//    eventHandler.addSubsystem(&tcpSystem);
+//    eventHandler.addSubsystem(cmdEventHandlerSystem.get());
+//    tcpSystem.connectToServer("127.0.0.1", 12000);
 
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &Task::deviceDiscovered);
