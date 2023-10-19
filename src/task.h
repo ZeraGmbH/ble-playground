@@ -34,10 +34,10 @@ private:
     quint16         warningFlags = 0;
 
 
-    VeinEvent::EventHandler eventHandler;
-    VeinNet::NetworkSystem netSystem;
-    VeinNet::TcpSystem tcpSystem;
-    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
+//    VeinEvent::EventHandler eventHandler;
+//    VeinNet::NetworkSystem netSystem;
+//    VeinNet::TcpSystem tcpSystem;
+//    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
 
 
 
