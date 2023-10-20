@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
-
 #include <tasksimpleveinsetter.h>
 #include "vn_networksystem.h"
 #include "vn_tcpsystem.h"
@@ -20,6 +19,8 @@ public:
 public slots:
     void run();
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
+    void finished();
+    void deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updatedfield);
 
 private:
     const qint16    ManufId = 0x026C;
@@ -28,7 +29,6 @@ private:
     float           temperatureInF;
     float           airPressure = 0.0;
     quint8          humidity = 0;;
-    quint8          discoverCnt = 10;
     quint8          secCnt = 0;
     quint32         errorFlags = 0;
     quint16         warningFlags = 0;
@@ -40,9 +40,6 @@ private:
 //    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
 
 
-
-signals:
-    void finished();
 };
 
 #endif // TASK_H

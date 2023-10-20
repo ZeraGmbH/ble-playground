@@ -16,10 +16,9 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 {
     unsigned int retHlp;
     //QBluetoothAddress bleSensorAddress("28:2C:02:40:69:6B");  // ef-BLE-T Firmware 5.x
-    QBluetoothAddress bleSensorAddress("28:2C:02:41:8C:B1");    // ef-BLE-THP Firmware 6.x.y
+    QBluetoothAddress bleSensorAdr("28:2C:02:41:8C:B1");    // ef-BLE-THP Firmware 6.x.y
 
-
-    if (device.address() == bleSensorAddress)
+    if (device.address() == bleSensorAdr)
     {
 
         //std::cout << "MAC: " << device.address().toString().toStdString() << std::endl;
@@ -141,10 +140,22 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 //        {
 //            std::cout << "Sensor data not valid!" << std::endl;
 //        }
-
-
     }
 }
+
+void Task::finished()
+{
+    for(auto device : discoveryAgent->discoveredDevices())
+        deviceDiscovered(device);
+    discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+}
+
+void Task::deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updatedfield)
+{
+    std::cout << "Updated ADR: " << device.address().toString().toStdString() << std::endl;
+    deviceDiscovered(device);
+}
+
 
 
 void Task::run()
@@ -157,10 +168,16 @@ void Task::run()
 //    eventHandler.addSubsystem(cmdEventHandlerSystem.get());
 //    tcpSystem.connectToServer("127.0.0.1", 12000);
 
+
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
-    connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &Task::deviceDiscovered);
-    discoveryAgent->setLowEnergyDiscoveryTimeout(0);
+    //connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &Task::deviceDiscovered);
+    //connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &Task::finished);
+    connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceUpdated, this, &Task::deviceUpdated);
+    discoveryAgent->setLowEnergyDiscoveryTimeout(0); // todo -> 0
+    //discoveryAgent->setInquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry); // not helpfull
     discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+
+
 
     //QThread::msleep(100 * 1000); // TODO fix
     //discoveryAgent->stop();
