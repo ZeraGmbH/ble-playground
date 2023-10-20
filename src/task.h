@@ -19,8 +19,8 @@ public:
 public slots:
     void run();
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    void finished();
-    void deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updatedfield);
+    //void finished();
+    //void deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updatedfield);
 
 private:
     const qint16    ManufId = 0x026C;
@@ -33,12 +33,10 @@ private:
     quint32         errorFlags = 0;
     quint16         warningFlags = 0;
 
-
-//    VeinEvent::EventHandler eventHandler;
-//    VeinNet::NetworkSystem netSystem;
-//    VeinNet::TcpSystem tcpSystem;
-//    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
-
+    VeinEvent::EventHandler eventHandler;
+    VeinNet::NetworkSystem netSystem;
+    VeinNet::TcpSystem tcpSystem;
+    VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
 
 };
 
