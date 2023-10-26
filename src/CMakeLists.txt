@@ -1,10 +1,3 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
-
 file(GLOB SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
@@ -13,20 +6,13 @@ file(GLOB HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 )
 
-include_directories(
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Bluetooth_INCLUDE_DIRS}
+add_executable(ble-playground-app
+    ${SRCS}
+    ${HEADERS}
 )
 
-link_directories(
-    ${CMAKE_PREFIX_PATH}/lib
-)
-
-add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
-
-
-target_link_libraries(${PROJECT_NAME}
-    PUBLIC
+target_link_libraries(ble-playground-app
+    PRIVATE
     Qt5Core
     Qt5Bluetooth
     Qt5Network
@@ -35,18 +21,6 @@ target_link_libraries(${PROJECT_NAME}
     Zera::VfConvenientCode
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    )
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
-
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ble-playground-app
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
