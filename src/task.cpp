@@ -137,20 +137,19 @@ void Task::run()
 {
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &Task::deviceDiscovered);
-    discoveryAgent->setLowEnergyDiscoveryTimeout(0); // todo -> 0
+    discoveryAgent->setLowEnergyDiscoveryTimeout(0);
     //discoveryAgent->setInquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry); // not helpfull
     discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 
     QDateTime timeNow = QDateTime::currentDateTime();
     m_timeLastMeasurement = timeNow.toSecsSinceEpoch();
 
-    BleInfo* bleSensor = new BleInfo();
-    if (bleSensor->readBleSensorMacAddr() == true)
-       std::cout << "Read Sensor-MAC with success" << std::endl;
+    BleInfo bleSensor;
+    if (bleSensor.readBleSensorMacAddr() == true)
+       qInfo("MAC temperature sensor from filesystem: %s", qPrintable(bleSensor.getSensorMacAddr()));
     else
-       std::cout << "Not read Sensor-MAC" << std::endl;
-    m_bleEfentoSensorAdr = QBluetoothAddress(bleSensor->getSensorMacAddr());
-    delete bleSensor;
+        qInfo("Not read Sensor-MAC from filesystem");
+    m_bleEfentoSensorAdr = QBluetoothAddress(bleSensor.getSensorMacAddr());
 
     //QThread::msleep(100 * 1000); // TODO fix
     //discoveryAgent->stop();
