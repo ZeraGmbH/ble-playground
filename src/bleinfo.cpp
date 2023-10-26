@@ -4,7 +4,7 @@
 
 BleInfo::BleInfo()
 {
-    m_macAddress = "28:2C:02:41:8C:B1";  // or without ":" possible
+    m_macAddress = "282C02000000";  // or with ":" possible
     m_path = "/opt/zera/conf/bleSensorMAC";
 }
 

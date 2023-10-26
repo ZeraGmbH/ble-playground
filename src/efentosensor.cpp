@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "efentosensor.h"
 #include <cstring>
 #include <iostream>
@@ -6,12 +7,11 @@ EfentoSensor::EfentoSensor(const char* manufactureData)
 {
     std::memcpy(m_manufactureData, manufactureData, sizeof (m_manufactureData));
 
-    m_softwareVerMaj = 0;       // AHÖ  sinnig????
+    m_softwareVerMaj = 0;
     m_softwareVerMin = 0;
     m_battLevelOK = false;
     m_encryptionEnable = false;
     //m_storageErrorActive = false;
-
 }
 
 EfentoSensor::~EfentoSensor()
@@ -128,9 +128,9 @@ void EfentoSensor::decodeMeasureValues()
 
 void EfentoSensor::decodeAdvertiseValues()
 {
-    m_errorFlags = 0x00;
+    m_warningFlags = 0x00;
     unsigned char hlpB;
-    m_firmwareVersion[0] = m_manufactureData[7] & 0xF8;     // todo check if correct
+    m_firmwareVersion[0] = m_manufactureData[7] & 0xF8;
     m_firmwareVersion[0] >>= 3;
     m_firmwareVersion[1] = m_manufactureData[8];
     m_firmwareVersion[1] >>= 5;
@@ -143,7 +143,9 @@ void EfentoSensor::decodeAdvertiseValues()
     else
     {
         m_battLevelOK = false;
+        qInfo("Sensor battery low detect");
         m_warningFlags |= m_warningLowBattery;
+
     }
     if (m_manufactureData[9] & 0x04)
         m_encryptionEnable = true;
@@ -174,8 +176,6 @@ void EfentoSensor::decodeAdvertiseValues()
 
     //std::cout << "FW-Mj: " << std::to_string(m_firmwareVersion[0]) << "  FW-Mi: " << std::to_string(m_firmwareVersion[1]) << "  FW-LTS: " << std::to_string(m_firmwareVersion[2]) << std::endl;
     //std::cout << "Measure TS: " << std::to_string(m_measurementTs) << std::endl;
-
-    //std::cout "Measure TS: " << std::to_string(m_measurementTs) << std::endl;
 }
 
 

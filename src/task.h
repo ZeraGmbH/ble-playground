@@ -19,11 +19,9 @@ public:
 public slots:
     void run();
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    //void finished();
-    //void deviceUpdated(const QBluetoothDeviceInfo &device, QBluetoothDeviceInfo::Fields updatedfield);
 
 private:
-    static constexpr    qint16      ManufId = 0x026C;            // ?? MDÖ
+    static constexpr    qint16      ManufId = 0x026C;
     static constexpr    qint8       TimeoutMeasurement = 5;
     quint32             lastMeasureTS;
     float               m_temperatureInC;
@@ -35,7 +33,7 @@ private:
     qint64              m_timeLastMeasurement;
     bool                m_connectOK = false;
     QBluetoothAddress   m_bleEfentoSensorAdr;
-    QString             m_HlpStr;
+    QString             m_HlpStr;   // todo
 
     VeinEvent::EventHandler eventHandler;
     VeinNet::NetworkSystem netSystem;
