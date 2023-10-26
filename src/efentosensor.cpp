@@ -24,15 +24,14 @@ unsigned char EfentoSensor::getFrameType()
     return m_manufactureData[0];
 }
 
-
-
-unsigned char EfentoSensor::checkMsgType()
+unsigned char EfentoSensor::checkFrameType()
 {
-    if (m_manufactureData[0] == 0x04)          // todo -> const
-        return m_frameTypeMeasurement;
-    else if (m_manufactureData[0] == 0x03)
+    if (m_manufactureData[0] == m_frameTypeScanResponse)
+        return m_frameTypeScanResponse;
+    else if (m_manufactureData[0] == m_frameTypeAdvertisement)
         return m_frameTypeAdvertisement;
 
+    m_errorFlags |= m_errorFrameTypeNotValid;
     return m_frameTypeNone;
 }
 
@@ -60,7 +59,7 @@ void EfentoSensor::decodeMeasureValues()
             m_temperaturInC = temperatureRaw;
             if (isNegative)
                 m_temperaturInC *= -1;
-            m_temperaturInC /= 10;
+            m_temperaturInC /= 10.0;
             m_temperaturInF = m_temperaturInC;
             m_temperaturInF *= 1.8;
             m_temperaturInF += 32.0;
@@ -167,9 +166,9 @@ void EfentoSensor::decodeAdvertiseValues()
     if ((m_manufactureData[16] != 0x00) || (m_manufactureData[17] != 0x01))
         m_warningFlags |= m_warningMeasuremPeriFactFalse;
 
-    m_calibrationDate = m_manufactureData[16];
+    m_calibrationDate = m_manufactureData[18];
     m_calibrationDate <<= 8;
-    m_calibrationDate += m_manufactureData[17];
+    m_calibrationDate += m_manufactureData[19];
     if (m_calibrationDate == 0x00)
         m_warningFlags |= m_warningNoCalibDateSet;
 
