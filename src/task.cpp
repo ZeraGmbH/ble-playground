@@ -30,15 +30,15 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         {
             sensor->decodeAdvertiseValues();
             m_warningFlags = sensor->getActWarning();
-            m_errorFlags = sensor->getActError();
-            if (m_errorFlags == 0x00)
-            {
-                std::cout << "Advertisment data OK:" << std::endl;
-                lastMeasureTS = sensor->getLastMeasureTS();
-                std::cout << " -> Measure TS: " << std::to_string(lastMeasureTS) << std::endl;
-            }
-            else
-                std::cout << "ERROR decoding advertisment frame!" << std::endl;
+            lastMeasureTS = sensor->getLastMeasureTS();
+            qInfo("New advertisment frame Timestamp: %i", lastMeasureTS);
+
+//            if (m_warningFlags != 0x00)
+//            {
+
+//            }
+//            else
+//                qInfo("ERROR decoding advertisment frame!");
         }
 
         else if (sensor->checkFrameType() == sensor->m_frameTypeScanResponse)
@@ -57,15 +57,15 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
                     QObject::connect(taskSharedPtrConnect.get(), &TaskTemplate::sigFinish, [taskSharedPtrConnect](bool ok, int taskId)
                     { /* std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl; */  });
                     taskSharedPtrConnect->start();
-                    std::cout << "BLE-ConnectOK -> true" << std::endl;
+                    qInfo("BLE-ConnectOK -> true");
                 }
 
-                std::cout << "Measurement data OK:" << std::endl;
                 m_temperatureInC = sensor->getTemperaturInC();
                 m_temperatureInF = sensor->getTemperaturInF();
                 m_humidity = sensor->getHumidity();
                 m_airPressure = sensor->getAirPressure();
-                std::cout << " -> Temp. (C): " << m_temperatureInC << "  Temp. (F): "  << m_temperatureInF << "  Humidity: " << std::to_string(m_humidity) << "%  AirPress: " << m_airPressure << " hPa" << std::endl;
+                //std::cout << " -> Temp. (C): " << m_temperatureInC << "  Temp. (F): "  << m_temperatureInF << "  Humidity: " << std::to_string(m_humidity) << "%  AirPress: " << m_airPressure << " hPa" << std::endl;
+                qInfo("New sensor data: %02.2f °C", m_temperatureInC);
 
                 TaskSimpleVeinSetterPtr taskSetTempC = TaskSimpleVeinSetter::create(16, "TemperatureInC", m_temperatureInC, cmdEventHandlerSystem, 2000);
                 std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempC = std::move(taskSetTempC);
@@ -93,10 +93,10 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 
             }
             else
-                std::cout << "ERROR decoding measurement frame!" << std::to_string(m_errorFlags) << std::endl;
+                qInfo("ERROR decoding measurement frame!");
         }
         else
-            std::cout << "no valid frame/msg type" << std::endl;
+            qInfo("no valid frame/msg type");
         m_errorFlags = sensor->getActError();
 
         TaskSimpleVeinSetterPtr taskSetErrors = TaskSimpleVeinSetter::create(16, "Errors", m_errorFlags, cmdEventHandlerSystem, 2000);
@@ -127,7 +127,7 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
             QObject::connect(taskSharedPtrConnect.get(), &TaskTemplate::sigFinish, [taskSharedPtrConnect](bool ok, int taskId)
             { /* std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl; */  });
             taskSharedPtrConnect->start();
-            std::cout << "BLE-ConnectOK -> false" << std::endl;
+            qInfo("BLE-ConnectOK -> false");
         }
     }
 }
