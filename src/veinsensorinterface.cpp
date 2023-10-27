@@ -12,16 +12,8 @@ VeinSensorInterface::VeinSensorInterface(VfCmdEventHandlerSystemPtr veinCmdHandl
 void VeinSensorInterface::newConnectState(bool connected)
 {
     m_connected = connected;
-    TaskSimpleVeinSetterPtr taskSetConnect = TaskSimpleVeinSetter::create(m_sensorEntityId, "Connection", m_connected, m_veinCmdHandler, veinTimeout);
-    connect(taskSetConnect.get(), &TaskTemplate::sigFinish, this, &VeinSensorInterface::onTaskFinish);
-    taskSetConnect->start();
-    int taskId = taskSetConnect->getTaskId();
-    m_pendingTasks[taskId] = std::move(taskSetConnect);
+    TaskTemplatePtr taskSetConnect = TaskSimpleVeinSetter::create(m_sensorEntityId, "Connection", m_connected, m_veinCmdHandler, veinTimeout);
+    m_tasks.addSub(std::move(taskSetConnect));
+    m_tasks.start();
 }
 
-void VeinSensorInterface::onTaskFinish(bool ok, int taskId)
-{
-    if(!ok)
-        qWarning("Task with id %i failed!", taskId);
-    m_pendingTasks.erase(taskId);
-}
