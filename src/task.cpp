@@ -6,10 +6,14 @@
 #include "bleinfo.h"
 #include "veinsensorinterface.h"
 
+static constexpr qint8 sensorEntityId = 16;
+static constexpr qint16 ManufId = 0x026C;
+static constexpr qint8 TimeoutMeasurement = 5;
+
 Task::Task(QObject *parent) :
     QObject(parent),
     cmdEventHandlerSystem(VfCmdEventHandlerSystem::create()),
-    m_veinInterface(cmdEventHandlerSystem, 16)
+    m_veinInterface(cmdEventHandlerSystem, sensorEntityId)
 {
     eventHandler.addSubsystem(cmdEventHandlerSystem.get());
     netSystem.setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH); //!!!!!
@@ -36,13 +40,6 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
             m_warningFlags = sensor->getActWarning();
             lastMeasureTS = sensor->getLastMeasureTS();
             qInfo("New advertisment frame Timestamp: %i", lastMeasureTS);
-
-//            if (m_warningFlags != 0x00)
-//            {
-
-//            }
-//            else
-//                qInfo("ERROR decoding advertisment frame!");
         }
 
         else if (sensor->checkFrameType() == sensor->m_frameTypeScanResponse)
@@ -53,8 +50,7 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
             {
                 QDateTime timeNow = QDateTime::currentDateTime();
                 m_timeLastMeasurement = timeNow.toSecsSinceEpoch();
-                if (m_connectOK == false)
-                {
+                if (m_connectOK == false) {
                     m_connectOK = true;
                     m_veinInterface.newConnectState(m_connectOK);
                     qInfo("BLE-ConnectOK -> true");
@@ -100,8 +96,6 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         {
             m_connectOK = false;
             m_warningFlags = 0;
-            VeinSensorInterface sensorConnect(cmdEventHandlerSystem, 16);
-            sensorConnect.newConnectState(m_connectOK);
             m_veinInterface.newConnectState(m_connectOK);
             qInfo("BLE-ConnectOK -> false");
         }
