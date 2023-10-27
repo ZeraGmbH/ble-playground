@@ -4,9 +4,13 @@
 #include "task.h"
 #include "efentosensor.h"
 #include "bleinfo.h"
+#include "veinsensorinterface.h"
 
-Task::Task(QObject *parent) : QObject(parent) {
-    cmdEventHandlerSystem = VfCmdEventHandlerSystem::create();
+Task::Task(QObject *parent) :
+    QObject(parent),
+    cmdEventHandlerSystem(VfCmdEventHandlerSystem::create()),
+    m_veinInterface(cmdEventHandlerSystem, 16)
+{
     eventHandler.addSubsystem(cmdEventHandlerSystem.get());
     netSystem.setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH); //!!!!!
     eventHandler.addSubsystem(&netSystem);
@@ -52,11 +56,7 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
                 if (m_connectOK == false)
                 {
                     m_connectOK = true;
-                    TaskSimpleVeinSetterPtr taskSetConnect = TaskSimpleVeinSetter::create(16, "Connection", m_connectOK, cmdEventHandlerSystem, 2000);
-                    std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrConnect = std::move(taskSetConnect);
-                    QObject::connect(taskSharedPtrConnect.get(), &TaskTemplate::sigFinish, [taskSharedPtrConnect](bool ok, int taskId)
-                    { /* std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl; */  });
-                    taskSharedPtrConnect->start();
+                    m_veinInterface.newConnectState(m_connectOK);
                     qInfo("BLE-ConnectOK -> true");
                 }
 
@@ -122,11 +122,9 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         {
             m_connectOK = false;
             m_warningFlags = 0;
-            TaskSimpleVeinSetterPtr taskSetConnect = TaskSimpleVeinSetter::create(16, "Connection", m_connectOK, cmdEventHandlerSystem, 2000);
-            std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrConnect = std::move(taskSetConnect);
-            QObject::connect(taskSharedPtrConnect.get(), &TaskTemplate::sigFinish, [taskSharedPtrConnect](bool ok, int taskId)
-            { /* std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl; */  });
-            taskSharedPtrConnect->start();
+            VeinSensorInterface sensorConnect(cmdEventHandlerSystem, 16);
+            sensorConnect.newConnectState(m_connectOK);
+            m_veinInterface.newConnectState(m_connectOK);
             qInfo("BLE-ConnectOK -> false");
         }
     }

@@ -7,6 +7,7 @@
 #include "vn_networksystem.h"
 #include "vn_tcpsystem.h"
 #include "ve_eventhandler.h"
+#include "veinsensorinterface.h"
 
 
 class Task : public QObject
@@ -39,6 +40,7 @@ private:
     VeinNet::NetworkSystem netSystem;
     VeinNet::TcpSystem tcpSystem;
     VfCmdEventHandlerSystemPtr cmdEventHandlerSystem;
+    VeinSensorInterface m_veinInterface;
 };
 
 #endif // TASK_H
