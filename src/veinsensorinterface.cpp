@@ -11,8 +11,7 @@ VeinSensorInterface::VeinSensorInterface(VfCmdEventHandlerSystemPtr veinCmdHandl
 
 void VeinSensorInterface::newConnectState(bool connected)
 {
-    m_connected = connected;
-    TaskTemplatePtr taskSetConnect = TaskSimpleVeinSetter::create(m_sensorEntityId, "Connection", m_connected, m_veinCmdHandler, veinTimeout);
+    TaskTemplatePtr taskSetConnect = TaskSimpleVeinSetter::create(m_sensorEntityId, "Connection", connected, m_veinCmdHandler, veinTimeout);
     m_tasks.addSub(std::move(taskSetConnect));
     m_tasks.start();
 }

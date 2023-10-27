@@ -15,7 +15,6 @@ public:
 private:
     VfCmdEventHandlerSystemPtr m_veinCmdHandler;
     int m_sensorEntityId;
-    bool m_connected = false;
     TaskContainerParallel m_tasks;
 };
 
