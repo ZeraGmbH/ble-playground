@@ -64,33 +64,11 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
                 m_temperatureInF = sensor->getTemperaturInF();
                 m_humidity = sensor->getHumidity();
                 m_airPressure = sensor->getAirPressure();
-                //std::cout << " -> Temp. (C): " << m_temperatureInC << "  Temp. (F): "  << m_temperatureInF << "  Humidity: " << std::to_string(m_humidity) << "%  AirPress: " << m_airPressure << " hPa" << std::endl;
                 qInfo("New sensor data: %02.2f °C", m_temperatureInC);
-
-                TaskSimpleVeinSetterPtr taskSetTempC = TaskSimpleVeinSetter::create(16, "TemperatureInC", m_temperatureInC, cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempC = std::move(taskSetTempC);
-                QObject::connect(taskSharedPtrTempC.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempC](bool ok, int taskId)
-                { /* std::cout << "Successful: taskSharedPtrTempC " << ok << std::endl; */  });
-                taskSharedPtrTempC->start();
-
-                TaskSimpleVeinSetterPtr taskSetTempF = TaskSimpleVeinSetter::create(16, "TemperatureInF", m_temperatureInF, cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrTempF = std::move(taskSetTempF);
-                QObject::connect(taskSharedPtrTempF.get(), &TaskTemplate::sigFinish, [taskSharedPtrTempF](bool ok, int taskId)
-                {  /* std::cout << "Successful: taskSharedPtrTempF " << ok << std::endl; */ });
-                taskSharedPtrTempF->start();
-
-                TaskSimpleVeinSetterPtr taskSetHumidity = TaskSimpleVeinSetter::create(16, "Humidity", m_humidity, cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrHumidity = std::move(taskSetHumidity);
-                QObject::connect(taskSharedPtrHumidity.get(), &TaskTemplate::sigFinish, [taskSharedPtrHumidity](bool ok, int taskId)
-                {  /* std::cout << "Successful: taskSharedPtrTempF " << ok << std::endl; */ });
-                taskSharedPtrHumidity->start();
-
-                TaskSimpleVeinSetterPtr taskSetAirPressure = TaskSimpleVeinSetter::create(16, "AirPressure", m_airPressure, cmdEventHandlerSystem, 2000);
-                std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrAirPressure = std::move(taskSetAirPressure);
-                QObject::connect(taskSharedPtrAirPressure.get(), &TaskTemplate::sigFinish, [taskSharedPtrAirPressure](bool ok, int taskId)
-                {  /* std::cout << "Successful: taskSharedPtrTempF " << ok << std::endl; */ });
-                taskSharedPtrAirPressure->start();
-
+                m_veinInterface.newTemperaturInC(m_temperatureInC);
+                m_veinInterface.newTemperaturInF(m_temperatureInF);
+                m_veinInterface.newHumidity(m_humidity);
+                m_veinInterface.newAirPressure(m_airPressure);
             }
             else
                 qInfo("ERROR decoding measurement frame!");

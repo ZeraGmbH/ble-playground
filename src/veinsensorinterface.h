@@ -11,6 +11,10 @@ class VeinSensorInterface : public QObject
 public:
     VeinSensorInterface(VfCmdEventHandlerSystemPtr veinCmdHandler, int sensorEntityId);
     void newConnectState(bool connected);
+    void newTemperaturInC (float tempInC);
+    void newTemperaturInF (float tempInF);
+    void newHumidity (unsigned char humidity);
+    void newAirPressure (float airPressure);
 
 private:
     VfCmdEventHandlerSystemPtr m_veinCmdHandler;
