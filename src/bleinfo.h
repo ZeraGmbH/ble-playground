@@ -6,7 +6,6 @@
 class BleInfo
 {
 public:
-    //Q_OBJECT      ????
     BleInfo();
 
     bool    readBleSensorMacAddr();

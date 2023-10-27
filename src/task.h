@@ -32,7 +32,6 @@ private:
     qint64              m_timeLastMeasurement;
     bool                m_connectOK = false;
     QBluetoothAddress   m_bleEfentoSensorAdr;
-//    QString             m_HlpStr;   // todo
 
     VeinEvent::EventHandler eventHandler;
     VeinNet::NetworkSystem netSystem;

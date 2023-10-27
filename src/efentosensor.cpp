@@ -3,6 +3,33 @@
 #include <cstring>
 #include <iostream>
 
+// constants FW 6.x.y
+static constexpr unsigned long m_TempMaxRawValue = 80000;
+static constexpr unsigned long m_HumidityMaxRawValue = 200;
+static constexpr unsigned int m_AirPressMaxRawValue = 40000;
+
+static constexpr unsigned char m_sensorTypeTemperatur = 1;
+static constexpr unsigned char m_sensorTypeHumidity = 2;
+static constexpr unsigned char m_sensorTypeAirPressure = 3;
+static constexpr unsigned char m_sensorTypeDiffPressure = 4;
+
+// Global Errors and Warnings  FW 6.x.y
+static constexpr unsigned long m_errorTempUnvalidSlot = 1<<0;
+static constexpr unsigned long m_errorTempExceedRange = 1<<1;
+static constexpr unsigned long m_errorTypeSlot1 = 1<<2;
+static constexpr unsigned long m_errorTypeSlot2 = 1<<3;
+static constexpr unsigned long m_errorTypeSlot3 = 1<<4;
+static constexpr unsigned long m_errorHumidExceedRange = 1<<5;
+static constexpr unsigned long m_errorAirPressExceedRange = 1<<6;
+static constexpr unsigned long m_errorHumidValueNegtive = 1<<7;
+static constexpr unsigned long m_errorAirPressValueNegtive = 1<<8;
+static constexpr unsigned long m_errorFrameTypeNotValid = 1<<9;
+static constexpr unsigned long m_warningLowBattery = 1<<0;
+static constexpr unsigned long m_warningMeasuremPeriBaseFalse = 1<<1;
+static constexpr unsigned long m_warningMeasuremPeriFactFalse = 1<<2;
+static constexpr unsigned long m_warningNoCalibDateSet = 1<<3;
+
+
 EfentoSensor::EfentoSensor(const char* manufactureData)
 {
     std::memcpy(m_manufactureData, manufactureData, sizeof (m_manufactureData));
@@ -11,13 +38,25 @@ EfentoSensor::EfentoSensor(const char* manufactureData)
     m_softwareVerMin = 0;
     m_battLevelOK = false;
     m_encryptionEnable = false;
-    //m_storageErrorActive = false;
 }
 
 EfentoSensor::~EfentoSensor()
 {
 }
 
+float EfentoSensor::zigzagConvert(unsigned long valueRaw, float divisor)
+{
+    bool isNegative = false;
+    float val;
+    if (valueRaw & 0x01)      // value is negativ
+        isNegative = true;
+    valueRaw >>= 1;
+    val = valueRaw;
+    if (isNegative)
+        val *= -1;
+    val /= divisor;
+    return val;
+}
 
 unsigned char EfentoSensor::getFrameType()
 {
@@ -52,14 +91,7 @@ void EfentoSensor::decodeMeasureValues()
             m_errorFlags |= m_errorTempExceedRange;
         else
         {
-            unsigned long temperatureRaw = m_temperatureRaw;
-            if (temperatureRaw & 0x01)      // convert from ZIGZAG to float
-                isNegative = true;
-            temperatureRaw >>= 1;
-            m_temperaturInC = temperatureRaw;
-            if (isNegative)
-                m_temperaturInC *= -1;
-            m_temperaturInC /= 10.0;
+            m_temperaturInC = zigzagConvert(m_temperatureRaw, 10.0);
             m_temperaturInF = m_temperaturInC;
             m_temperaturInF *= 1.8;
             m_temperaturInF += 32.0;
@@ -70,31 +102,22 @@ void EfentoSensor::decodeMeasureValues()
 
     if (m_manufactureData[5] == m_sensorTypeHumidity)
     {
-        m_humidityRaw = m_manufactureData[6];
-        m_humidityRaw <<= 8;
-        m_humidityRaw += m_manufactureData[7];
-        m_humidityRaw <<= 8;
-        m_humidityRaw += m_manufactureData[8];
-        if (m_humidityRaw > m_HumidityMaxRawValue)
+        unsigned long humidityRaw = m_manufactureData[6];
+        humidityRaw <<= 8;
+        humidityRaw += m_manufactureData[7];
+        humidityRaw <<= 8;
+        humidityRaw += m_manufactureData[8];
+        if (humidityRaw > m_HumidityMaxRawValue)
             m_errorFlags |= m_errorHumidExceedRange;
         else
         {
-            unsigned long humidityRaw = m_humidityRaw;
-            if (m_humidityRaw & 0x01)      // convert from ZIGZAG to unsigned char
-            {
+            m_humidity = zigzagConvert(humidityRaw, 1.0);
+            if (m_humidity < 0)
                 m_errorFlags |= m_errorHumidValueNegtive;
-                m_humidity = m_HumidityNotValid;
-            }
-            else
-            {
-                m_humidityRaw >>= 1;
-                m_humidity = (unsigned char) m_humidityRaw;
-            }
         }
     }
     else
         m_errorFlags |= m_errorTypeSlot2;
-
 
     if (m_manufactureData[9] == m_sensorTypeAirPressure)
     {
@@ -107,24 +130,14 @@ void EfentoSensor::decodeMeasureValues()
             m_errorFlags |= m_errorAirPressExceedRange;
         else
         {
-            unsigned int airPressureRaw = m_airPressunreRaw;
-            if (airPressureRaw & 0x01)      // convert from ZIGZAG to float
-            {
+            m_airPressure = zigzagConvert(m_airPressunreRaw, 10.0);
+            if (m_airPressunreRaw < 0)
                 m_errorFlags |= m_errorAirPressValueNegtive;
-                m_airPressure = m_AirPressNotValid;
-            }
-            else
-            {
-                airPressureRaw >>= 1;
-                m_airPressure = airPressureRaw;
-                m_airPressure /= 10;
-            }
         }
     }
     else
         m_errorFlags |= m_errorTypeSlot3;
 }
-
 
 void EfentoSensor::decodeAdvertiseValues()
 {
@@ -189,7 +202,7 @@ float EfentoSensor::getTemperaturInF()
     return m_temperaturInF;
 }
 
-unsigned char EfentoSensor::getHumidity()
+float EfentoSensor::getHumidity()
 {
     return m_humidity;
 }
