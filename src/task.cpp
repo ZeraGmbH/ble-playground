@@ -32,21 +32,21 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
 
     if (device.address() == m_bleEfentoSensorAdr)
     {
-        EfentoSensor* sensor = new EfentoSensor(device.manufacturerData(ManufId).constData());
+        EfentoSensor sensor(device.manufacturerData(ManufId).constData());
 
-        if (sensor->checkFrameType() == sensor->m_frameTypeAdvertisement)
+        if (sensor.checkFrameType() == sensor.m_frameTypeAdvertisement)
         {
-            sensor->decodeAdvertiseValues();
-            m_warningFlags = sensor->getActWarning();
+            sensor.decodeAdvertiseValues();
+            m_warningFlags = sensor.getActWarning();
             m_veinInterface.newWarnings(m_warningFlags);
-            lastMeasureTS = sensor->getLastMeasureTS();
+            lastMeasureTS = sensor.getLastMeasureTS();
             qInfo("New advertisment frame Timestamp: %i", lastMeasureTS);
         }
 
-        else if (sensor->checkFrameType() == sensor->m_frameTypeScanResponse)
+        else if (sensor.checkFrameType() == sensor.m_frameTypeScanResponse)
         {
-            sensor->decodeMeasureValues();
-            m_errorFlags = sensor->getActError();
+            sensor.decodeMeasureValues();
+            m_errorFlags = sensor.getActError();
             if (m_errorFlags == 0x00)
             {
                 QDateTime timeNow = QDateTime::currentDateTime();
@@ -57,10 +57,10 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
                     qInfo("BLE-ConnectOK -> true");
                 }
 
-                m_temperatureInC = sensor->getTemperaturInC();
-                m_temperatureInF = sensor->getTemperaturInF();
-                m_humidity = sensor->getHumidity();
-                m_airPressure = sensor->getAirPressure();
+                m_temperatureInC = sensor.getTemperaturInC();
+                m_temperatureInF = sensor.getTemperaturInF();
+                m_humidity = sensor.getHumidity();
+                m_airPressure = sensor.getAirPressure();
                 qInfo("New sensor data: %02.2f °C", m_temperatureInC);
                 m_veinInterface.newTemperaturInC(m_temperatureInC);
                 m_veinInterface.newTemperaturInF(m_temperatureInF);
@@ -73,7 +73,6 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         }
         else
             qInfo("no valid frame/msg type");
-        delete sensor;
     }
 
     QDateTime timeNow = QDateTime::currentDateTime();
