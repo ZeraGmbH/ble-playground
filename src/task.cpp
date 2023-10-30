@@ -96,7 +96,7 @@ void Task::run()
 {
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
     connect(discoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &Task::deviceDiscovered);
-    discoveryAgent->setLowEnergyDiscoveryTimeout(0);
+    discoveryAgent->setLowEnergyDiscoveryTimeout(0);    // 0 = permanent scan active
     //discoveryAgent->setInquiryType(QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry); // not helpfull
     discoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 

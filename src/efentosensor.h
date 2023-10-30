@@ -28,14 +28,11 @@ public:
 private:
 
     unsigned char   m_manufactureData[26];
-
     unsigned char   m_softwareVerMaj;
     unsigned char   m_softwareVerMin;
     unsigned long   m_errorFlags;
     unsigned int    m_warningFlags;
 
-    unsigned long m_temperatureRaw;
-    unsigned long m_airPressunreRaw;
     unsigned char m_firmwareVersion[3];
     bool m_battLevelOK;
     bool m_encryptionEnable;
@@ -47,9 +44,6 @@ private:
     float           m_airPressure;
     unsigned int    m_calibrationDate;
     unsigned int    m_crc16;
-
-    // constants
-    static constexpr unsigned char m_measurementPeriodBaseZera = 15;    // FW6
 };
 
 

@@ -3,17 +3,17 @@
 #include <cstring>
 #include <iostream>
 
-// constants FW 6.x.y
+// constants
 static constexpr unsigned long m_TempMaxRawValue = 80000;
 static constexpr unsigned long m_HumidityMaxRawValue = 200;
 static constexpr unsigned int m_AirPressMaxRawValue = 40000;
-
 static constexpr unsigned char m_sensorTypeTemperatur = 1;
 static constexpr unsigned char m_sensorTypeHumidity = 2;
 static constexpr unsigned char m_sensorTypeAirPressure = 3;
 static constexpr unsigned char m_sensorTypeDiffPressure = 4;
+static constexpr unsigned char m_measurementPeriodBaseZera = 15;
 
-// Global Errors and Warnings  FW 6.x.y
+// Errors and Warnings
 static constexpr unsigned long m_errorTempUnvalidSlot = 1<<0;
 static constexpr unsigned long m_errorTempExceedRange = 1<<1;
 static constexpr unsigned long m_errorTypeSlot1 = 1<<2;
@@ -54,7 +54,7 @@ float EfentoSensor::zigzagConvert(unsigned long valueRaw, float divisor)
     val = valueRaw;
     if (isNegative)
         val *= -1;
-    val /= divisor;
+    val /= divisor;         // todo protect against 0 ????
     return val;
 }
 
@@ -80,18 +80,18 @@ void EfentoSensor::decodeMeasureValues()
     bool isNegative = false;
     if (m_manufactureData[1] == m_sensorTypeTemperatur)
     {
-        m_temperaturInC = -9999.99;
+        m_temperaturInC = -9999.99; // todo better solution???
         m_temperaturInF = -9999.99;
-        m_temperatureRaw = m_manufactureData[2];
-        m_temperatureRaw <<= 8;
-        m_temperatureRaw += m_manufactureData[3];
-        m_temperatureRaw <<= 8;
-        m_temperatureRaw += m_manufactureData[4];
-        if (m_temperatureRaw > m_TempMaxRawValue)
+        unsigned long temperatureRaw = m_manufactureData[2];
+        temperatureRaw <<= 8;
+        temperatureRaw += m_manufactureData[3];
+        temperatureRaw <<= 8;
+        temperatureRaw += m_manufactureData[4];
+        if (temperatureRaw > m_TempMaxRawValue)
             m_errorFlags |= m_errorTempExceedRange;
         else
         {
-            m_temperaturInC = zigzagConvert(m_temperatureRaw, 10.0);
+            m_temperaturInC = zigzagConvert(temperatureRaw, 10.0);
             m_temperaturInF = m_temperaturInC;
             m_temperaturInF *= 1.8;
             m_temperaturInF += 32.0;
@@ -121,17 +121,17 @@ void EfentoSensor::decodeMeasureValues()
 
     if (m_manufactureData[9] == m_sensorTypeAirPressure)
     {
-        m_airPressunreRaw = m_manufactureData[10];
-        m_airPressunreRaw <<= 8;
-        m_airPressunreRaw += m_manufactureData[11];
-        m_airPressunreRaw <<= 8;
-        m_airPressunreRaw += m_manufactureData[12];
-        if (m_airPressunreRaw > m_AirPressMaxRawValue)
+        unsigned long airPressunreRaw = m_manufactureData[10];
+        airPressunreRaw <<= 8;
+        airPressunreRaw += m_manufactureData[11];
+        airPressunreRaw <<= 8;
+        airPressunreRaw += m_manufactureData[12];
+        if (airPressunreRaw > m_AirPressMaxRawValue)
             m_errorFlags |= m_errorAirPressExceedRange;
         else
         {
-            m_airPressure = zigzagConvert(m_airPressunreRaw, 10.0);
-            if (m_airPressunreRaw < 0)
+            m_airPressure = zigzagConvert(airPressunreRaw, 10.0);
+            if (airPressunreRaw < 0)
                 m_errorFlags |= m_errorAirPressValueNegtive;
         }
     }
@@ -158,7 +158,6 @@ void EfentoSensor::decodeAdvertiseValues()
         m_battLevelOK = false;
         qInfo("Sensor battery low detect");
         m_warningFlags |= m_warningLowBattery;
-
     }
     if (m_manufactureData[9] & 0x04)
         m_encryptionEnable = true;
@@ -186,9 +185,6 @@ void EfentoSensor::decodeAdvertiseValues()
     m_calibrationDate += m_manufactureData[19];
     if (m_calibrationDate == 0x00)
         m_warningFlags |= m_warningNoCalibDateSet;
-
-    //std::cout << "FW-Mj: " << std::to_string(m_firmwareVersion[0]) << "  FW-Mi: " << std::to_string(m_firmwareVersion[1]) << "  FW-LTS: " << std::to_string(m_firmwareVersion[2]) << std::endl;
-    //std::cout << "Measure TS: " << std::to_string(m_measurementTs) << std::endl;
 }
 
 
