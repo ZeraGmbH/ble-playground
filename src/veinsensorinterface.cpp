@@ -44,4 +44,25 @@ void VeinSensorInterface::newAirPressure (float airPressure)
     m_tasks.start();
 }
 
+void VeinSensorInterface::newErrors (quint32 errors)
+{
+    TaskTemplatePtr taskSetErrors = TaskSimpleVeinSetter::create(m_sensorEntityId, "Errors", errors, m_veinCmdHandler, veinTimeout);
+    m_tasks.addSub(std::move(taskSetErrors));
+    m_tasks.start();
+}
+
+void VeinSensorInterface::newWarnings (quint32 warnings)
+{
+    TaskTemplatePtr taskSetWarnings = TaskSimpleVeinSetter::create(m_sensorEntityId, "Warnings", warnings, m_veinCmdHandler, veinTimeout);
+    m_tasks.addSub(std::move(taskSetWarnings));
+    m_tasks.start();
+}
+
+void VeinSensorInterface::newSensorAddress (QString address)
+{
+    TaskTemplatePtr taskSetAddress = TaskSimpleVeinSetter::create(m_sensorEntityId, "MAC_Address", address, m_veinCmdHandler, veinTimeout);
+    m_tasks.addSub(std::move(taskSetAddress));
+    m_tasks.start();
+}
+
 

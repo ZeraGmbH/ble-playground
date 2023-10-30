@@ -15,6 +15,9 @@ public:
     void newTemperaturInF (float tempInF);
     void newHumidity (unsigned char humidity);
     void newAirPressure (float airPressure);
+    void newErrors (quint32 errors);
+    void newWarnings (quint32 warnings);
+    void newSensorAddress (QString address);
 
 private:
     VfCmdEventHandlerSystemPtr m_veinCmdHandler;

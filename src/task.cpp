@@ -38,6 +38,7 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         {
             sensor->decodeAdvertiseValues();
             m_warningFlags = sensor->getActWarning();
+            m_veinInterface.newWarnings(m_warningFlags);
             lastMeasureTS = sensor->getLastMeasureTS();
             qInfo("New advertisment frame Timestamp: %i", lastMeasureTS);
         }
@@ -68,23 +69,11 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
             }
             else
                 qInfo("ERROR decoding measurement frame!");
+            m_errorFlags = sensor->getActError();
+            m_veinInterface.newErrors(m_errorFlags);
         }
         else
             qInfo("no valid frame/msg type");
-        m_errorFlags = sensor->getActError();
-
-        TaskSimpleVeinSetterPtr taskSetErrors = TaskSimpleVeinSetter::create(16, "Errors", m_errorFlags, cmdEventHandlerSystem, 2000);
-        std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrErrors = std::move(taskSetErrors);
-        QObject::connect(taskSharedPtrErrors.get(), &TaskTemplate::sigFinish, [taskSharedPtrErrors](bool ok, int taskId)
-        {  /* std::cout << "Successful: taskSharedPtrTempF " << ok << std::endl; */ });
-        taskSharedPtrErrors->start();
-
-        TaskSimpleVeinSetterPtr taskSetWarnings = TaskSimpleVeinSetter::create(16, "Warnings", m_warningFlags, cmdEventHandlerSystem, 2000);
-        std::shared_ptr<TaskSimpleVeinSetter> taskSharedPtrWarnings = std::move(taskSetWarnings);
-        QObject::connect(taskSharedPtrWarnings.get(), &TaskTemplate::sigFinish, [taskSharedPtrWarnings](bool ok, int taskId)
-        {  /* std::cout << "Successful: taskSharedPtrTempF " << ok << std::endl; */ });
-        taskSharedPtrWarnings->start();
-
         delete sensor;
     }
 
@@ -115,8 +104,10 @@ void Task::run()
     m_timeLastMeasurement = timeNow.toSecsSinceEpoch();
 
     BleInfo bleSensor;
-    if (bleSensor.readBleSensorMacAddr() == true)
-       qInfo("MAC temperature sensor from filesystem: %s", qPrintable(bleSensor.getSensorMacAddr()));
+    if (bleSensor.readBleSensorMacAddr() == true) {
+        qInfo("MAC temperature sensor from filesystem: %s", qPrintable(bleSensor.getSensorMacAddr()));
+        m_veinInterface.newSensorAddress(bleSensor.getSensorMacAddr());
+        }
     else
         qInfo("Not read Sensor-MAC from filesystem");
     m_bleEfentoSensorAdr = QBluetoothAddress(bleSensor.getSensorMacAddr());
