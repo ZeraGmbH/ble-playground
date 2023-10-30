@@ -22,16 +22,16 @@ public slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
 
 private:
-    quint32             lastMeasureTS;
-    float               m_temperatureInC;
-    float               m_temperatureInF;
-    float               m_airPressure = 0.0;
-    quint8              m_humidity = 0;;
-    quint32             m_errorFlags = 0;
-    quint16             m_warningFlags = 0;
-    qint64              m_timeLastMeasurement;
-    bool                m_connectOK = false;
-    QBluetoothAddress   m_bleEfentoSensorAdr;
+    quint32 lastMeasureTS;
+    float m_temperatureInC;
+    float m_temperatureInF;
+    float m_airPressure = 0.0;
+    quint8 m_humidity = 0;;
+    quint32 m_errorFlags = 0;
+    quint16 m_warningFlags = 0;
+    qint64 m_timeLastMeasurement;
+    bool m_connectOK = false;
+    QBluetoothAddress m_bleEfentoSensorAdr;
 
     VeinEvent::EventHandler eventHandler;
     VeinNet::NetworkSystem netSystem;

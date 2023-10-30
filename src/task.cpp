@@ -69,7 +69,6 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
             }
             else
                 qInfo("ERROR decoding measurement frame!");
-            m_errorFlags = sensor->getActError();
             m_veinInterface.newErrors(m_errorFlags);
         }
         else
@@ -90,7 +89,6 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
         }
     }
 }
-
 
 void Task::run()
 {
