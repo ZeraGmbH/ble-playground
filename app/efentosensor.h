@@ -1,31 +1,35 @@
 #ifndef EFENTOSENSOR_H
 #define EFENTOSENSOR_H
 
-class EfentoSensor {
+class EfentoSensor
+{
 public:
     EfentoSensor(const char* manufactureData);
     ~EfentoSensor();
-
-    float zigzagConvert(unsigned long valueRaw, float divisor);
-    unsigned char checkFrameType();
-    void decodeMeasureValues();
-    void decodeAdvertiseValues();
-    unsigned long getLastMeasureTS();
-    unsigned char getSensorType(unsigned char slot);
     float getTemperaturInC();
     float getTemperaturInF();
     float getHumidity();
     float getAirPressure();
+
+    unsigned char checkFrameType();
+
+    void decodeMeasureValues();
+    void decodeAdvertiseValues();
+
+    unsigned long getLastMeasureTS();
+    unsigned char getSensorType(unsigned char slot);
     bool isErrorActive();
     unsigned long getActError();
     unsigned int getActWarning();
     unsigned char getFrameType();
 
-    static constexpr unsigned char m_frameTypeNone = 0;
     static constexpr unsigned char m_frameTypeAdvertisement = 3;
     static constexpr unsigned char m_frameTypeScanResponse = 4;
 
 private:
+    float zigzagConvert(unsigned long valueRaw, float divisor);
+    static constexpr unsigned char m_frameTypeNone = 0;
+
     unsigned char m_manufactureData[26];
     unsigned char m_softwareVerMaj;
     unsigned char m_softwareVerMin;
