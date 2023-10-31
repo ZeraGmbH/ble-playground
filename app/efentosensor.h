@@ -45,7 +45,6 @@ private:
     float m_humidity;
     float m_airPressure;
     unsigned int m_calibrationDate;
-    unsigned int m_crc16;
 };
 
 
