@@ -16,4 +16,4 @@ find_package(Qt5 COMPONENTS Core Network Bluetooth REQUIRED)
 find_package(VeinFramework REQUIRED)
 find_package(ZenuxCore REQUIRED)
 
-add_subdirectory(src)
+add_subdirectory(app)
