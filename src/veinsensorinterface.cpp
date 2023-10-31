@@ -16,14 +16,14 @@ void VeinSensorInterface::newConnectState(bool connected)
     m_tasks.start();
 }
 
-void VeinSensorInterface::newTemperaturInC (float tempInC)
+void VeinSensorInterface::newTemperatureC (float tempInC)
 {
     TaskTemplatePtr taskSetTempInC = TaskSimpleVeinSetter::create(m_sensorEntityId, "TemperatureInC", tempInC, m_veinCmdHandler, veinTimeout);
     m_tasks.addSub(std::move(taskSetTempInC));
     m_tasks.start();
 }
 
-void VeinSensorInterface::newTemperaturInF (float tempInF)
+void VeinSensorInterface::newTemperatureF (float tempInF)
 {
     TaskTemplatePtr taskSetTempInF = TaskSimpleVeinSetter::create(m_sensorEntityId, "TemperatureInF", tempInF, m_veinCmdHandler, veinTimeout);
     m_tasks.addSub(std::move(taskSetTempInF));

@@ -1,23 +1,23 @@
 #ifndef VEINSENSORINTERFACE_H
 #define VEINSENSORINTERFACE_H
 
+#include "environmentinterface.h"
 #include "vf_cmd_event_handler_system.h"
 #include <taskcontainerparallel.h>
 #include <unordered_map>
 
-class VeinSensorInterface : public QObject
+class VeinSensorInterface : public EnvironmentInterface
 {
-    Q_OBJECT
 public:
     VeinSensorInterface(VfCmdEventHandlerSystemPtr veinCmdHandler, int sensorEntityId);
-    void newConnectState(bool connected);
-    void newTemperaturInC (float tempInC);
-    void newTemperaturInF (float tempInF);
-    void newHumidity (unsigned char humidity);
-    void newAirPressure (float airPressure);
-    void newErrors (quint32 errors);
-    void newWarnings (quint32 warnings);
-    void newSensorAddress (QString address);
+    void newConnectState(bool connected) override;
+    void newTemperatureC(float tempInC) override;
+    void newTemperatureF(float tempInF) override;
+    void newHumidity(unsigned char humidity) override;
+    void newAirPressure(float airPressure) override;
+    void newErrors (quint32 errors) override;
+    void newWarnings (quint32 warnings) override;
+    void newSensorAddress (QString address) override;
 
 private:
     VfCmdEventHandlerSystemPtr m_veinCmdHandler;

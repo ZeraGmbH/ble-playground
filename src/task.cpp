@@ -62,8 +62,8 @@ void Task::deviceDiscovered(const QBluetoothDeviceInfo &device)
                 m_humidity = sensor.getHumidity();
                 m_airPressure = sensor.getAirPressure();
                 qInfo("New sensor data: %02.2f °C", m_temperatureInC);
-                m_veinInterface.newTemperaturInC(m_temperatureInC);
-                m_veinInterface.newTemperaturInF(m_temperatureInF);
+                m_veinInterface.newTemperatureC(m_temperatureInC);
+                m_veinInterface.newTemperatureF(m_temperatureInF);
                 m_veinInterface.newHumidity(m_humidity);
                 m_veinInterface.newAirPressure(m_airPressure);
             }
