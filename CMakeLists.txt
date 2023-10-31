@@ -17,3 +17,4 @@ find_package(VeinFramework REQUIRED)
 find_package(ZenuxCore REQUIRED)
 
 add_subdirectory(app)
+add_subdirectory(lib)
