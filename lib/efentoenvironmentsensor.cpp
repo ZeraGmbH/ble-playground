@@ -104,14 +104,11 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     hlpB <<= 3;
     m_firmwareVersion[1] |= hlpB;
     m_firmwareVersion[2] = manufData[8] & 0x1F;
-    if (manufData[9] & 0x01)
-        m_battLevelOK = true;
-    else
-    {
-        m_battLevelOK = false;
+    if (!(manufData[9] & 0x01)) {
         qInfo("Sensor battery low detect");
         m_warningFlags |= warningLowBattery;
     }
+
     if (manufData[9] & 0x04)
         m_encryptionEnable = true;
     else

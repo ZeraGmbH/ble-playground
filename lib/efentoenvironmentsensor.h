@@ -36,7 +36,7 @@ private:
     unsigned long m_errorFlags;
     unsigned int m_warningFlags;
     unsigned char m_firmwareVersion[3];
-    bool m_battLevelOK;
+    //bool m_battLevelOK;
     bool m_encryptionEnable;
     unsigned long m_measurementTs;
     unsigned int m_measurementPeriodBase;
