@@ -31,15 +31,9 @@ private:
     float zigzagConvert(unsigned long valueRaw, float divisor);
 
     QBluetoothAddress m_address;
-    unsigned char m_softwareVerMaj;
-    unsigned char m_softwareVerMin;
     unsigned long m_errorFlags;
     unsigned int m_warningFlags;
     unsigned char m_firmwareVersion[3];
-    //bool m_battLevelOK;
-    bool m_encryptionEnable;
-    unsigned long m_measurementTs;
-    unsigned int m_measurementPeriodBase;
     float m_temperaturInC;
     float m_temperaturInF;
     float m_humidity;

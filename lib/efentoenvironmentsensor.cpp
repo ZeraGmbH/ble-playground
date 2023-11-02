@@ -26,9 +26,10 @@ static constexpr unsigned long errorAirPressValueNegtive = 1<<8;
 static constexpr unsigned long errorFrameTypeNotValid = 1<<9;
 
 static constexpr unsigned long warningLowBattery = 1<<0;
-static constexpr unsigned long warningMeasuremPeriBaseFalse = 1<<1;
-static constexpr unsigned long warningMeasuremPeriFactFalse = 1<<2;
-static constexpr unsigned long warningNoCalibDateSet = 1<<3;
+static constexpr unsigned long warningEncryptionEnabled = 1<<1;
+static constexpr unsigned long warningMeasuremPeriBaseFalse = 1<<2;
+static constexpr unsigned long warningMeasuremPeriFactFalse = 1<<3;
+static constexpr unsigned long warningNoCalibDateSet = 1<<4;
 
 
 EfentoEnvironmentSensor::EfentoEnvironmentSensor(QBluetoothAddress address) :
@@ -108,28 +109,17 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         qInfo("Sensor battery low detect");
         m_warningFlags |= warningLowBattery;
     }
-
-    if (manufData[9] & 0x04)
-        m_encryptionEnable = true;
-    else
-        m_encryptionEnable = false;
-
-    m_measurementTs = manufData[10];
-    m_measurementTs <<= 8;
-    m_measurementTs += manufData[11];
-    m_measurementTs <<= 8;
-    m_measurementTs += manufData[12];
-    m_measurementTs <<= 8;
-    m_measurementTs += manufData[13];
-
-    m_measurementPeriodBase = manufData[14];
-    m_measurementPeriodBase <<= 8;
-    m_measurementPeriodBase += manufData[15];
-    if (m_measurementPeriodBase != measurementPeriodBaseZera)
+    if (manufData[9] & 0x08) {
+        qInfo("Encryption enabled");
+        m_warningFlags |= warningEncryptionEnabled;
+    }
+    unsigned int measurementPeriodBase = manufData[14];
+    measurementPeriodBase <<= 8;
+    measurementPeriodBase += manufData[15];
+    if (measurementPeriodBase != measurementPeriodBaseZera)
         m_warningFlags |= warningMeasuremPeriBaseFalse;
     if ((manufData[16] != 0x00) || (manufData[17] != 0x01))
         m_warningFlags |= warningMeasuremPeriFactFalse;
-
     m_calibrationDate = manufData[18];
     m_calibrationDate <<= 8;
     m_calibrationDate += manufData[19];
