@@ -78,6 +78,11 @@ float EfentoEnvironmentSensor::getAirPressure()
     return m_airPressure;
 }
 
+float EfentoEnvironmentSensor::celsiusToFahrenheit(float tempCelsius)
+{
+    return tempCelsius * 1.8 + 32.0;
+}
+
 bool EfentoEnvironmentSensor::isAdvertisementFrame(const QByteArray &manufData)
 {
     return manufData[0] == frameTypeAdvertisement;
@@ -154,9 +159,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
             float newTemp = zigzagConvert(temperatureRaw, 10.0);
             if(m_temperaturInC != newTemp) {
                 m_temperaturInC = newTemp;
-                m_temperaturInF = m_temperaturInC;
-                m_temperaturInF *= 1.8;
-                m_temperaturInF += 32.0;
+                m_temperaturInF = celsiusToFahrenheit(m_temperaturInC);
                 valueChanged = true;
             }
         }

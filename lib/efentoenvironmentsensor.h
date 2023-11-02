@@ -15,6 +15,7 @@ public:
     float getTemperaturInF();
     float getHumidity();
     float getAirPressure();
+    static float celsiusToFahrenheit(float tempCelsius);
 
 signals:
     void sigChangeConnectState();
