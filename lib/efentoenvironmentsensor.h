@@ -41,13 +41,14 @@ signals:
 
 protected:
     void decodeTemperature(const QByteArray &manufData, bool &valueChanged);
+    static float zigzagConvert(unsigned long valueRaw, float divisor);
+
 private:
     bool isAdvertisementFrame(const QByteArray &manufData);
     bool isScanResponseFrame(const QByteArray &manufData);
     void handleInvalid(const QByteArray &manufData);
     void decodeAdvertiseValues(const QByteArray &manufData);
     void decodeMeasureValues(const QByteArray &manufData);
-    float zigzagConvert(unsigned long valueRaw, float divisor);
 
     QBluetoothAddress m_address;
     unsigned long m_errorFlags;

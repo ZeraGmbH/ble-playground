@@ -32,7 +32,7 @@ function(SETUP_QTESTS)
         target_link_libraries(${_testname}
             PUBLIC
             Qt5::Test
-            ble-sensors
+            ble-sensors-testlib
             )
     endforeach()
 endfunction()

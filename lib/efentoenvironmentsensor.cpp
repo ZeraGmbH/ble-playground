@@ -218,6 +218,6 @@ float EfentoEnvironmentSensor::zigzagConvert(unsigned long valueRaw, float divis
     val = valueRaw;
     if (isNegative)
         val *= -1;
-    val /= divisor;         // todo protect against 0 ????
+    val /= divisor;
     return val;
 }

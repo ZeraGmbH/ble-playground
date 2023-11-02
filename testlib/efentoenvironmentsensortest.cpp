@@ -4,3 +4,8 @@ void EfentoEnvironmentSensorTest::decodeTemperatureTest(const QByteArray &manufD
 {
     decodeTemperature(manufData, valueChanged);
 }
+
+float EfentoEnvironmentSensorTest::zigzagConvertTest(unsigned long valueRaw, float divisor)
+{
+    return zigzagConvert(valueRaw, divisor);
+}
