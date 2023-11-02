@@ -38,7 +38,7 @@ private:
     float m_temperaturInF;
     float m_humidity;
     float m_airPressure;
-    unsigned int m_calibrationDate;
+    QString m_lastCalibration;
     bool m_isConnected;
 };
 

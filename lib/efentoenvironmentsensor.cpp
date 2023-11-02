@@ -1,4 +1,5 @@
 #include "efentoenvironmentsensor.h"
+#include <QDate>
 
 static constexpr qint16 ManufId = 0x026C;
 
@@ -120,11 +121,15 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         m_warningFlags |= warningMeasuremPeriBaseFalse;
     if ((manufData[16] != 0x00) || (manufData[17] != 0x01))
         m_warningFlags |= warningMeasuremPeriFactFalse;
-    m_calibrationDate = manufData[18];
-    m_calibrationDate <<= 8;
-    m_calibrationDate += manufData[19];
-    if (m_calibrationDate == 0x00)
+    unsigned long calibrationDay;
+    calibrationDay = manufData[18];
+    calibrationDay <<= 8;
+    calibrationDay += manufData[19];
+    if (calibrationDay == 0x00)
         m_warningFlags |= warningNoCalibDateSet;
+    QDate calibDate(1970, 1, 1);
+    calibDate = calibDate.addDays(calibrationDay);
+    m_lastCalibration = calibDate.toString("dd.MM.yyyy");
 
     if(oldWarningFlags != m_warningFlags)
         emit sigNewWarnings();
