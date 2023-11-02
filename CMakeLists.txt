@@ -37,7 +37,7 @@ function(SETUP_QTESTS)
     endforeach()
 endfunction()
 
-
 add_subdirectory(app)
 add_subdirectory(lib)
+add_subdirectory(testlib)
 add_subdirectory(tests)

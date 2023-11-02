@@ -16,24 +16,6 @@ static constexpr unsigned int airPressMaxRawValue = 40000;
 static constexpr unsigned char frameTypeAdvertisement = 3;
 static constexpr unsigned char frameTypeScanResponse = 4;
 
-static constexpr unsigned long errorTempUnvalidSlot = 1<<0;
-static constexpr unsigned long errorTempExceedRange = 1<<1;
-static constexpr unsigned long errorTypeSlot1 = 1<<2;
-static constexpr unsigned long errorTypeSlot2 = 1<<3;
-static constexpr unsigned long errorTypeSlot3 = 1<<4;
-static constexpr unsigned long errorHumidExceedRange = 1<<5;
-static constexpr unsigned long errorAirPressExceedRange = 1<<6;
-static constexpr unsigned long errorHumidValueNegtive = 1<<7;
-static constexpr unsigned long errorAirPressValueNegtive = 1<<8;
-static constexpr unsigned long errorFrameTypeNotValid = 1<<9;
-
-static constexpr unsigned long warningLowBattery = 1<<0;
-static constexpr unsigned long warningEncryptionEnabled = 1<<1;
-static constexpr unsigned long warningMeasuremPeriBaseFalse = 1<<2;
-static constexpr unsigned long warningMeasuremPeriFactFalse = 1<<3;
-static constexpr unsigned long warningNoCalibDateSet = 1<<4;
-
-
 EfentoEnvironmentSensor::EfentoEnvironmentSensor(QBluetoothAddress address) :
     m_address(address)
 {
@@ -77,6 +59,16 @@ float EfentoEnvironmentSensor::getHumidity()
 float EfentoEnvironmentSensor::getAirPressure()
 {
     return m_airPressure;
+}
+
+unsigned long EfentoEnvironmentSensor::getErrorFlags()
+{
+    return m_errorFlags;
+}
+
+unsigned int EfentoEnvironmentSensor::getWarningFlags()
+{
+    return m_warningFlags;
 }
 
 bool EfentoEnvironmentSensor::isAdvertisementFrame(const QByteArray &manufData)
@@ -136,11 +128,8 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         emit sigNewWarnings();
 }
 
-void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
+void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
-    unsigned long oldErrorFlags = m_errorFlags;
-    bool valueChanged = false;
-    m_errorFlags = 0x00;
     if (manufData[1] == sensorTypeTemperatur) {
         m_temperaturInC = -9999.99; // todo better solution???
         m_temperaturInF = -9999.99;
@@ -162,6 +151,14 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     }
     else
         m_errorFlags |= errorTypeSlot1;
+}
+
+void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
+{
+    unsigned long oldErrorFlags = m_errorFlags;
+    bool valueChanged = false;
+    m_errorFlags = 0x00;
+    decodeTemperature(manufData, valueChanged);
 
     if (manufData[5] == sensorTypeHumidity) {
         unsigned long humidityRaw = manufData[6];

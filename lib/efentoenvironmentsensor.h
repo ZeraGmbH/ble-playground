@@ -9,19 +9,38 @@ class EfentoEnvironmentSensor : public QObject
 public:
     EfentoEnvironmentSensor(QBluetoothAddress address);
     void decode(const QBluetoothDeviceInfo &info);
+    static constexpr unsigned long errorTempUnvalidSlot = 1<<0;
+    static constexpr unsigned long errorTempExceedRange = 1<<1;
+    static constexpr unsigned long errorTypeSlot1 = 1<<2;
+    static constexpr unsigned long errorTypeSlot2 = 1<<3;
+    static constexpr unsigned long errorTypeSlot3 = 1<<4;
+    static constexpr unsigned long errorHumidExceedRange = 1<<5;
+    static constexpr unsigned long errorAirPressExceedRange = 1<<6;
+    static constexpr unsigned long errorHumidValueNegtive = 1<<7;
+    static constexpr unsigned long errorAirPressValueNegtive = 1<<8;
+    static constexpr unsigned long errorFrameTypeNotValid = 1<<9;
+
+    static constexpr unsigned long warningLowBattery = 1<<0;
+    static constexpr unsigned long warningEncryptionEnabled = 1<<1;
+    static constexpr unsigned long warningMeasuremPeriBaseFalse = 1<<2;
+    static constexpr unsigned long warningMeasuremPeriFactFalse = 1<<3;
+    static constexpr unsigned long warningNoCalibDateSet = 1<<4;
 
     bool isConnected();
     float getTemperaturInC();
     float getTemperaturInF();
     float getHumidity();
     float getAirPressure();
-
+    unsigned long getErrorFlags();
+    unsigned int getWarningFlags();
 signals:
     void sigChangeConnectState();
     void sigNewValues();
     void sigNewWarnings();
     void sigNewErrors();
 
+protected:
+    void decodeTemperature(const QByteArray &manufData, bool &valueChanged);
 private:
     bool isAdvertisementFrame(const QByteArray &manufData);
     bool isScanResponseFrame(const QByteArray &manufData);
