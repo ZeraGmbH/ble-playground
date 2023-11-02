@@ -51,6 +51,31 @@ void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
     }
 }
 
+bool EfentoEnvironmentSensor::isConnected()
+{
+    return m_isConnected;
+}
+
+float EfentoEnvironmentSensor::getTemperaturInC()
+{
+    return m_temperaturInC;
+}
+
+float EfentoEnvironmentSensor::getTemperaturInF()
+{
+    return m_temperaturInF;
+}
+
+float EfentoEnvironmentSensor::getHumidity()
+{
+    return m_humidity;
+}
+
+float EfentoEnvironmentSensor::getAirPressure()
+{
+    return m_airPressure;
+}
+
 bool EfentoEnvironmentSensor::isAdvertisementFrame(const QByteArray &manufData)
 {
     return manufData[0] == frameTypeAdvertisement;

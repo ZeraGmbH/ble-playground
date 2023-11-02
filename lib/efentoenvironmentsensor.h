@@ -45,6 +45,7 @@ private:
     float m_humidity;
     float m_airPressure;
     unsigned int m_calibrationDate;
+    bool m_isConnected;
 };
 
 #endif // EFENTOENVIRONMENTSENSOR_H
