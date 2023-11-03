@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QBluetoothDeviceInfo>
+#include <memory>
 
 class BluetoothDeviceInfoDecoder : public QObject
 {
@@ -13,5 +14,7 @@ public:
 signals:
 
 };
+
+typedef std::unique_ptr<BluetoothDeviceInfoDecoder> BluetoothDeviceInfoDecoderPtr;
 
 #endif // BLUETOOTHDEVICEINFODECODER_H
