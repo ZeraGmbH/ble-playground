@@ -128,6 +128,20 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         emit sigNewWarnings();
 }
 
+void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
+{
+    unsigned long oldErrorFlags = m_errorFlags;
+    bool valueChanged = false;
+    m_errorFlags = 0x00;
+    decodeTemperature(manufData, valueChanged);
+    decodeHumidity(manufData, valueChanged);
+    decodeAirPressure(manufData, valueChanged);
+    if(valueChanged)
+        emit sigNewValues();
+    if(oldErrorFlags != m_errorFlags)
+        emit sigNewErrors();
+}
+
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData[1] == sensorTypeTemperatur) {
@@ -199,20 +213,6 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
     }
     else
         m_errorFlags |= errorTypeSlot3;
-}
-
-void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
-{
-    unsigned long oldErrorFlags = m_errorFlags;
-    bool valueChanged = false;
-    m_errorFlags = 0x00;
-    decodeTemperature(manufData, valueChanged);
-    decodeHumidity(manufData, valueChanged);
-    decodeAirPressure(manufData, valueChanged);
-    if(valueChanged)
-        emit sigNewValues();
-    if(oldErrorFlags != m_errorFlags)
-        emit sigNewErrors();
 }
 
 float EfentoEnvironmentSensor::zigzagConvert(unsigned long valueRaw, float divisor)
