@@ -153,13 +153,8 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
         m_errorFlags |= errorTypeSlot1;
 }
 
-void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
+void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &valueChanged)
 {
-    unsigned long oldErrorFlags = m_errorFlags;
-    bool valueChanged = false;
-    m_errorFlags = 0x00;
-    decodeTemperature(manufData, valueChanged);
-
     if (manufData[5] == sensorTypeHumidity) {
         unsigned long humidityRaw = manufData[6];
         humidityRaw <<= 8;
@@ -180,7 +175,10 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     }
     else
         m_errorFlags |= errorTypeSlot2;
+}
 
+void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, bool &valueChanged)
+{
     if (manufData[9] == sensorTypeAirPressure) {
         unsigned long airPressunreRaw = manufData[10];
         airPressunreRaw <<= 8;
@@ -201,7 +199,16 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     }
     else
         m_errorFlags |= errorTypeSlot3;
+}
 
+void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
+{
+    unsigned long oldErrorFlags = m_errorFlags;
+    bool valueChanged = false;
+    m_errorFlags = 0x00;
+    decodeTemperature(manufData, valueChanged);
+    decodeHumidity(manufData, valueChanged);
+    decodeAirPressure(manufData, valueChanged);
     if(valueChanged)
         emit sigNewValues();
     if(oldErrorFlags != m_errorFlags)
