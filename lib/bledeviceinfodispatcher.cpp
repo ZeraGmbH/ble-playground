@@ -6,7 +6,7 @@ BleDeviceInfoDispatcher::BleDeviceInfoDispatcher()
 
 void BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
 {
-    m_decoders.push_back(std::move(decoder));
+    m_decoders.push_back(decoder);
 }
 
 void BleDeviceInfoDispatcher::start()

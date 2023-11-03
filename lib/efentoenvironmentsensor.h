@@ -10,6 +10,7 @@ class EfentoEnvironmentSensor : public BluetoothDeviceInfoDecoder
 public:
     EfentoEnvironmentSensor(QBluetoothAddress address);
     void decode(const QBluetoothDeviceInfo &info) override;
+
     static constexpr unsigned long errorTempUnvalidSlot = 1<<0;
     static constexpr unsigned long errorTempExceedRange = 1<<1;
     static constexpr unsigned long errorTypeSlot1 = 1<<2;

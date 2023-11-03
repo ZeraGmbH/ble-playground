@@ -14,8 +14,7 @@ add_executable(ble-playground-app
 target_link_libraries(ble-playground-app
     PRIVATE
     Qt5Core
-    Qt5Bluetooth
-    Qt5Network
+    ble-sensors
     Zera::VfEvent
     Zera::VfTcp
     Zera::VfConvenientCode

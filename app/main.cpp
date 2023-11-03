@@ -1,25 +1,20 @@
-#include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
-#include <QThread>
-#include <iostream>
-#include <QtCore>
-
-#include "task.h"
-
+#include "bleefentofacade.h"
+#include "veinconnection.h"
+#include <QCoreApplication>
+#include <QTimer>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    // Task parented to the application so that it
-    // will be deleted by the application.
-    Task *task = new Task(&a);
-
-    // This will cause the application to exit when
-    // the task signals finished.
-    QObject::connect(task, SIGNAL(finished()), &a, SLOT(quit()));
+    VeinConnection veinConnection("localhost");
+    veinConnection.start();
+    constexpr int bleEntityId = 16;
+    BleEfentoFacade bleFacade(veinConnection.getCmdEventHandler(), bleEntityId);
 
     // This will run the task from the application event loop.
-    QTimer::singleShot(0, task, SLOT(run()));
+    //QTimer::singleShot(0, &bleFacade, &BleEfentoFacade::start);
+    bleFacade.start(QBluetoothAddress("28:2C:02:41:8C:B1"));
 
     return a.exec();
 }
