@@ -9,12 +9,12 @@ class test_zigzagConvert : public QObject
 private slots:
     void test_negativeHighVal();
     void test_negativeMidVal();
-//    void test_negativeLowVal();
+    void test_negativeLowVal();
     void test_negativeZero();
     void test_positiveZero();
     void test_positiveLowVal();
-//    void test_positiveMidVal();
-//    void test_positiveHighVal();
+    void test_positiveMidVal();
+    void test_positiveHighVal();
 };
 
 #endif // TEST_ZIGZAGCONVERT_H
