@@ -9,3 +9,5 @@ float EfentoEnvironmentSensorTest::zigzagConvertTest(unsigned long valueRaw, flo
 {
     return zigzagConvert(valueRaw, divisor);
 }
+
+
