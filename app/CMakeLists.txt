@@ -15,9 +15,6 @@ target_link_libraries(ble-playground-app
     PRIVATE
     Qt5Core
     ble-sensors
-    Zera::VfEvent
-    Zera::VfTcp
-    Zera::VfConvenientCode
 )
 
 install(TARGETS ble-playground-app

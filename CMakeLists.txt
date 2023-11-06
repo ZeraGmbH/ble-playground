@@ -15,8 +15,6 @@ include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
 find_package(Qt5 COMPONENTS Core Network Bluetooth Test REQUIRED)
-find_package(VeinFramework REQUIRED)
-find_package(ZenuxCore REQUIRED)
 
 enable_testing()
 
@@ -39,7 +37,6 @@ function(SETUP_QTESTS)
     endforeach()
 endfunction()
 
-
 write_basic_package_version_file(
     BlePlaygroundConfigVersion.cmake
     VERSION ${PACKAGE_VERSION}
@@ -57,7 +54,6 @@ install(EXPORT BlePlaygroundExport
     NAMESPACE Zera::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BlePlayground
     )
-
 
 add_subdirectory(app)
 add_subdirectory(lib)
