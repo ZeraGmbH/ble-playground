@@ -228,12 +228,9 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
 
 float EfentoEnvironmentSensor::zigzagConvert(unsigned long valueRaw, float divisor)
 {
-    bool isNegative = false;
-    float val;
-    if (valueRaw & 0x01)      // value is negativ
-        isNegative = true;
+    bool isNegative = (valueRaw & 0x01);
     valueRaw >>= 1;
-    val = valueRaw;
+    float val = valueRaw;
     if (isNegative)
         val *= -1;
     val /= divisor;
