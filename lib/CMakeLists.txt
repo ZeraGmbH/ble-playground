@@ -27,24 +27,18 @@ target_include_directories(ble-sensors
 set_target_properties(ble-sensors PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(ble-sensors PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-write_basic_package_version_file(
-    ble-sensorsConfigVersion.cmake
-    VERSION ${PACKAGE_VERSION}
-    COMPATIBILITY SameMajorVersion
-    )
-configure_file(ble-sensorsConfig.cmake.in ble-sensorsConfig.cmake @ONLY)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/ble-sensorsConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/ble-sensorsConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ble-sensors
-    )
-
-export(TARGETS ble-sensors NAMESPACE Zera:: FILE ble-sensorsTargets.cmake)
 install(TARGETS ble-sensors
-    EXPORT ble-sensorsExport
+    EXPORT BlePlaygroundExport
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
+generate_export_header(ble-sensors)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ble-sensors_export.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ble-sensors
+    )
+
+export(TARGETS ble-sensors FILE BlePlaygroundTargets.cmake)
 install(
     FILES ${HEADER}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ble-sensors

@@ -9,8 +9,10 @@ project(${PROJECT_NAME}
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+include(FeatureSummary)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include(GenerateExportHeader)
 
 find_package(Qt5 COMPONENTS Core Network Bluetooth Test REQUIRED)
 find_package(VeinFramework REQUIRED)
@@ -36,6 +38,26 @@ function(SETUP_QTESTS)
             )
     endforeach()
 endfunction()
+
+
+write_basic_package_version_file(
+    BlePlaygroundConfigVersion.cmake
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY SameMajorVersion
+    )
+configure_file(BlePlaygroundConfig.cmake.in BlePlaygroundConfig.cmake @ONLY)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/BlePlaygroundConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/BlePlaygroundConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BlePlayground
+    )
+
+install(EXPORT BlePlaygroundExport
+    FILE BlePlaygroundTargets.cmake
+    NAMESPACE Zera::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BlePlayground
+    )
+
 
 add_subdirectory(app)
 add_subdirectory(lib)
