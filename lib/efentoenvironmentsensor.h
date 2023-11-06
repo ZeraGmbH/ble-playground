@@ -8,7 +8,8 @@ class EfentoEnvironmentSensor : public BluetoothDeviceInfoDecoder
 {
     Q_OBJECT
 public:
-    EfentoEnvironmentSensor(QBluetoothAddress address);
+    EfentoEnvironmentSensor();
+    void setBluetoothAddress(QBluetoothAddress address);
     void decode(const QBluetoothDeviceInfo &info) override;
 
     static constexpr unsigned long errorTempUnvalidSlot = 1<<0;

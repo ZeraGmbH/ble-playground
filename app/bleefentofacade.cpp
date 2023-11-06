@@ -7,7 +7,8 @@ BleEfentoFacade::BleEfentoFacade(VfCmdEventHandlerSystemPtr veinCmdHandler, int 
 
 void BleEfentoFacade::start(QBluetoothAddress address)
 {
-    m_efentoSensor = std::make_shared<EfentoEnvironmentSensor>(address);
+    m_efentoSensor = std::make_shared<EfentoEnvironmentSensor>();
+    m_efentoSensor->setBluetoothAddress(address);
     connect(m_efentoSensor.get(), &EfentoEnvironmentSensor::sigChangeConnectState,
             this, &BleEfentoFacade::onChangeConnectState);
     connect(m_efentoSensor.get(), &EfentoEnvironmentSensor::sigNewValues,

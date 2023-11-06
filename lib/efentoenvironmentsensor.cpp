@@ -16,9 +16,13 @@ static constexpr unsigned int airPressMaxRawValue = 40000;
 static constexpr unsigned char frameTypeAdvertisement = 3;
 static constexpr unsigned char frameTypeScanResponse = 4;
 
-EfentoEnvironmentSensor::EfentoEnvironmentSensor(QBluetoothAddress address) :
-    m_address(address)
+EfentoEnvironmentSensor::EfentoEnvironmentSensor()
 {
+}
+
+void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress address)
+{
+    m_address = address;
 }
 
 void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
