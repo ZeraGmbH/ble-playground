@@ -73,17 +73,17 @@ unsigned int EfentoEnvironmentSensor::getWarningFlags()
 
 bool EfentoEnvironmentSensor::isAdvertisementFrame(const QByteArray &manufData)
 {
-    return manufData[0] == frameTypeAdvertisement;
+    return manufData.at(0) == frameTypeAdvertisement;
 }
 
 bool EfentoEnvironmentSensor::isScanResponseFrame(const QByteArray &manufData)
 {
-    return manufData[0] == frameTypeScanResponse;
+    return manufData.at(0) == frameTypeScanResponse;
 }
 
 void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 {
-    qWarning("Efento: Unknown manufactoring data: %i", manufData[0]);
+    qWarning("Efento: Unknown manufactoring data: %i", manufData.at(0));
 }
 
 void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
@@ -91,33 +91,33 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     unsigned int oldWarningFlags = m_warningFlags;
     m_warningFlags = 0x00;
     unsigned char hlpB;
-    m_firmwareVersion[0] = manufData[7] & 0xF8;
+    m_firmwareVersion[0] = manufData.at(7) & 0xF8;
     m_firmwareVersion[0] >>= 3;
-    m_firmwareVersion[1] = manufData[8];
+    m_firmwareVersion[1] = manufData.at(8);
     m_firmwareVersion[1] >>= 5;
-    hlpB = manufData[7] & 0x07;
+    hlpB = manufData.at(7) & 0x07;
     hlpB <<= 3;
     m_firmwareVersion[1] |= hlpB;
-    m_firmwareVersion[2] = manufData[8] & 0x1F;
-    if (!(manufData[9] & 0x01)) {
+    m_firmwareVersion[2] = manufData.at(8) & 0x1F;
+    if (!(manufData.at(9) & 0x01)) {
         qInfo("Sensor battery low detect");
         m_warningFlags |= warningLowBattery;
     }
-    if (manufData[9] & 0x08) {
+    if (manufData.at(9) & 0x08) {
         qInfo("Encryption enabled");
         m_warningFlags |= warningEncryptionEnabled;
     }
-    unsigned int measurementPeriodBase = manufData[14];
+    unsigned int measurementPeriodBase = manufData.at(14);
     measurementPeriodBase <<= 8;
-    measurementPeriodBase += manufData[15];
+    measurementPeriodBase += manufData.at(15);
     if (measurementPeriodBase != measurementPeriodBaseZera)
         m_warningFlags |= warningMeasuremPeriBaseFalse;
-    if ((manufData[16] != 0x00) || (manufData[17] != 0x01))
+    if ((manufData.at(16) != 0x00) || (manufData.at(17) != 0x01))
         m_warningFlags |= warningMeasuremPeriFactFalse;
     unsigned long calibrationDay;
-    calibrationDay = manufData[18];
+    calibrationDay = manufData.at(18);
     calibrationDay <<= 8;
-    calibrationDay += manufData[19];
+    calibrationDay += manufData.at(19);
     if (calibrationDay == 0x00)
         m_warningFlags |= warningNoCalibDateSet;
     QDate calibDate(1970, 1, 1);
@@ -139,22 +139,21 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     decodeHumidity(manufData, valueChanged);
     decodeAirPressure(manufData, valueChanged);
     if(valueChanged) {
-        qInfo("   -> NEW");
+        qInfo("   -> %2.2f°C  %2.2f°F  %2.0f%% RH  %2.2f hPa", m_temperaturInC, m_temperaturInF, m_humidity, m_airPressure);
         emit sigNewValues();
     }
     if(oldErrorFlags != m_errorFlags)
         emit sigNewErrors();
-
 }
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData[1] == sensorTypeTemperatur) {
-        unsigned long temperatureRaw = manufData[2];
+        unsigned long temperatureRaw = (unsigned char)manufData.at(2);
         temperatureRaw <<= 8;
-        temperatureRaw += manufData[3];
+        temperatureRaw += (unsigned char)manufData.at(3);
         temperatureRaw <<= 8;
-        temperatureRaw += manufData[4];
+        temperatureRaw += (unsigned char)manufData.at(4);
         if (temperatureRaw > tempMaxRawValue)
             m_errorFlags |= errorTempExceedRange;
         else {
@@ -163,6 +162,7 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
                 m_temperaturInC = newTemp;
                 m_temperaturInF = TemperatureConverter::celsiusToFahrenheit(m_temperaturInC);
                 valueChanged = true;
+                qInfo("   -> NEW temperature");
             }
         }
     }
@@ -173,11 +173,11 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
 void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData[5] == sensorTypeHumidity) {
-        unsigned long humidityRaw = manufData[6];
+        unsigned long humidityRaw = (unsigned char)manufData.at(6);
         humidityRaw <<= 8;
-        humidityRaw += manufData[7];
+        humidityRaw += (unsigned char)manufData.at(7);
         humidityRaw <<= 8;
-        humidityRaw += manufData[8];
+        humidityRaw += (unsigned char)manufData.at(8);
         if (humidityRaw > humidityMaxRawValue)
             m_errorFlags |= errorHumidExceedRange;
         else {
@@ -187,6 +187,7 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &
                 if (m_humidity < 0)
                     m_errorFlags |= errorHumidValueNegtive;
                 valueChanged = true;
+                qInfo("   -> NEW humidity");
             }
         }
     }
@@ -196,12 +197,12 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &
 
 void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, bool &valueChanged)
 {
-    if (manufData[9] == sensorTypeAirPressure) {
-        unsigned long airPressunreRaw = manufData[10];
+    if (manufData.at(9) == sensorTypeAirPressure) {
+        unsigned long airPressunreRaw = (unsigned char)manufData.at(10);
         airPressunreRaw <<= 8;
-        airPressunreRaw += manufData[11];
+        airPressunreRaw += (unsigned char)manufData.at(11);
         airPressunreRaw <<= 8;
-        airPressunreRaw += manufData[12];
+        airPressunreRaw += (unsigned char)manufData.at(12);
         if (airPressunreRaw > airPressMaxRawValue)
             m_errorFlags |= errorAirPressExceedRange;
         else {
@@ -211,6 +212,7 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
                 if (airPressunreRaw < 0)
                     m_errorFlags |= errorAirPressValueNegtive;
                 valueChanged = true;
+                qInfo("   -> NEW Air-pressure");
             }
         }
     }
