@@ -150,8 +150,6 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData[1] == sensorTypeTemperatur) {
-        m_temperaturInC = -9999.99; // todo better solution???
-        m_temperaturInF = -9999.99;
         unsigned long temperatureRaw = manufData[2];
         temperatureRaw <<= 8;
         temperatureRaw += manufData[3];
