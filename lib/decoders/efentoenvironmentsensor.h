@@ -49,8 +49,8 @@ protected:
     static float zigzagConvert(unsigned long zigzagVal, float divisor);
 
 private:
-    bool isAdvertisementFrame(const QByteArray &manufData);
-    bool isScanResponseFrame(const QByteArray &manufData);
+    bool isValidAdvertismentFrame(const QByteArray &manufData);
+    bool isValidScanResponseFrame(const QByteArray &manufData);
     void handleInvalid(const QByteArray &manufData);
     void decodeAdvertiseValues(const QByteArray &manufData);
     void decodeMeasureValues(const QByteArray &manufData);

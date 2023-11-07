@@ -16,6 +16,10 @@ static constexpr unsigned int airPressMaxRawValue = 40000;
 static constexpr unsigned char frameTypeAdvertisement = 3;
 static constexpr unsigned char frameTypeScanResponse = 4;
 
+static constexpr unsigned char frameSizeAdvertisment = 20;
+static constexpr unsigned char frameSizeScanResponse = 13;
+
+
 EfentoEnvironmentSensor::EfentoEnvironmentSensor()
 {
 }
@@ -29,10 +33,10 @@ void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
 {
     if (info.address() == m_address) {
         QByteArray manufData = info.manufacturerData(ManufId);
-        if(isAdvertisementFrame(manufData)) {
+        if(isValidAdvertismentFrame(manufData)) {
             decodeAdvertiseValues(manufData);
         }
-        else if(isScanResponseFrame(manufData)) {
+        else if(isValidScanResponseFrame(manufData)) {
             decodeMeasureValues(manufData);
         }
         else
@@ -75,14 +79,20 @@ unsigned int EfentoEnvironmentSensor::getWarningFlags()
     return m_warningFlags;
 }
 
-bool EfentoEnvironmentSensor::isAdvertisementFrame(const QByteArray &manufData)
+bool EfentoEnvironmentSensor::isValidAdvertismentFrame(const QByteArray &manufData)
 {
-    return manufData.at(0) == frameTypeAdvertisement;
+    if (manufData.length() >= frameSizeAdvertisment) {
+        return manufData.at(0) == frameTypeAdvertisement;
+    }
+    return false;
 }
 
-bool EfentoEnvironmentSensor::isScanResponseFrame(const QByteArray &manufData)
+bool EfentoEnvironmentSensor::isValidScanResponseFrame(const QByteArray &manufData)
 {
-    return manufData.at(0) == frameTypeScanResponse;
+    if (manufData.length() >= frameSizeScanResponse) {
+        return manufData.at(0) == frameTypeScanResponse;
+    }
+    return false;
 }
 
 void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
