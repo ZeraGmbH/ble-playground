@@ -30,15 +30,6 @@ void test_decodeTemperature::test_minus40DegreeCelsius()
     ba[2] = 0x00;
     ba[3] = 0x03;
     ba[4] = 0x1F;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x4C;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
