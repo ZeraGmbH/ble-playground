@@ -162,9 +162,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
-
-
-    if (manufData[1] == sensorTypeTemperatur) {
+    if (manufData.at(1) == sensorTypeTemperatur) {
         unsigned long temperatureRaw = (unsigned char)manufData.at(2);
         temperatureRaw <<= 8;
         temperatureRaw += (unsigned char)manufData.at(3);
@@ -188,7 +186,7 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
 
 void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &valueChanged)
 {
-    if (manufData[5] == sensorTypeHumidity) {
+    if (manufData.at(5) == sensorTypeHumidity) {
         unsigned long humidityRaw = (unsigned char)manufData.at(6);
         humidityRaw <<= 8;
         humidityRaw += (unsigned char)manufData.at(7);
