@@ -152,3 +152,28 @@ void test_decodeTemperature::test_plus40DegreeCelsius()
     QCOMPARE(sensor.getTemperaturInC(), 40.0);
     QVERIFY(sensor.getTemperaturInC() !=  40.1);
 }
+
+void test_decodeTemperature::test_rangeOverflow()
+{
+    QByteArray ba;
+    ba.resize(14);
+    ba[0] = 0x04;
+    ba[1] = 0x01; // slot temperature
+    ba[2] = 0x01;
+    ba[3] = 0x38;
+    ba[4] = 0x81;
+    ba[5] = 0x02; // slot humidity
+    ba[6] = 0x00;
+    ba[7] = 0x00;
+    ba[8] = 0x00;
+    ba[9] = 0x03; // slot air pressure
+    ba[10] = 0x00;
+    ba[11] = 0x01;
+    ba[12] = 0x02;
+    ba[13] = 0x00;
+
+    EfentoEnvironmentSensorTest sensor;
+    bool valChange = false;
+    sensor.decodeTemperatureTest(ba, valChange);
+    QVERIFY(sensor.getErrorFlags() & sensor.errorTempExceedRange);
+}

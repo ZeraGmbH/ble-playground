@@ -15,6 +15,7 @@ private slots:
     void test_0DegreeCelsius();
     void test_plus20DegreeCelsius();
     void test_plus40DegreeCelsius();
+    void test_rangeOverflow();
 
 };
 
