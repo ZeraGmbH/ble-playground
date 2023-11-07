@@ -36,7 +36,6 @@ void test_decodeTemperature::test_minus40DegreeCelsius()
     sensor.decodeTemperatureTest(ba, valChange);
     QCOMPARE(valChange, true);
     QCOMPARE(sensor.getTemperaturInC(), -40.0);
-
 }
 
 void test_decodeTemperature::test_minus20DegreeCelsius()
@@ -48,15 +47,6 @@ void test_decodeTemperature::test_minus20DegreeCelsius()
     ba[2] = 0x00;
     ba[3] = 0x01;
     ba[4] = 0x8F;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x4C;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
@@ -74,15 +64,6 @@ void test_decodeTemperature::test_0DegreeCelsius()
     ba[2] = 0x00;
     ba[3] = 0x00;
     ba[4] = 0x00;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x00;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
@@ -100,15 +81,6 @@ void test_decodeTemperature::test_plus20DegreeCelsius()
     ba[2] = 0x00;
     ba[3] = 0x01;
     ba[4] = 0x90;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x00;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
@@ -126,15 +98,6 @@ void test_decodeTemperature::test_plus40DegreeCelsius()
     ba[2] = 0x00;
     ba[3] = 0x03;
     ba[4] = 0x20;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x00;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
@@ -153,15 +116,6 @@ void test_decodeTemperature::test_rangeOverflow()
     ba[2] = 0x01;
     ba[3] = 0x38;
     ba[4] = 0x81;
-    ba[5] = 0x02; // slot humidity
-    ba[6] = 0x00;
-    ba[7] = 0x00;
-    ba[8] = 0x00;
-    ba[9] = 0x03; // slot air pressure
-    ba[10] = 0x00;
-    ba[11] = 0x01;
-    ba[12] = 0x02;
-    ba[13] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
