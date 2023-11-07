@@ -10,8 +10,7 @@ private slots:
     void test_negativeHighVal();
     void test_negativeMidVal();
     void test_negativeLowVal();
-    void test_negativeZero();
-    void test_positiveZero();
+    void test_Zero();
     void test_positiveLowVal();
     void test_positiveMidVal();
     void test_positiveHighVal();
