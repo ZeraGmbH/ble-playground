@@ -4,20 +4,20 @@
 
 static constexpr qint16 ManufId = 0x026C;
 
-static constexpr unsigned char measurementPeriodBaseZera = 15;
-static constexpr unsigned char sensorTypeTemperatur = 1;
-static constexpr unsigned char sensorTypeHumidity = 2;
-static constexpr unsigned char sensorTypeAirPressure = 3;
+static constexpr quint8 measurementPeriodBaseZera = 15;
+static constexpr quint8 sensorTypeTemperatur = 1;
+static constexpr quint8 sensorTypeHumidity = 2;
+static constexpr quint8 sensorTypeAirPressure = 3;
 
-static constexpr unsigned long tempMaxRawValue = 80000;
-static constexpr unsigned long humidityMaxRawValue = 200;
-static constexpr unsigned int airPressMaxRawValue = 40000;
+static constexpr quint32 tempMaxRawValue = 80000;
+static constexpr quint32 humidityMaxRawValue = 200;
+static constexpr quint16 airPressMaxRawValue = 40000;
 
-static constexpr unsigned char frameTypeAdvertisement = 3;
-static constexpr unsigned char frameTypeScanResponse = 4;
+static constexpr quint8 frameTypeAdvertisement = 3;
+static constexpr quint8 frameTypeScanResponse = 4;
 
-static constexpr unsigned char frameSizeAdvertisment = 20;
-static constexpr unsigned char frameSizeScanResponse = 13;
+static constexpr quint8 frameSizeAdvertisment = 20;
+static constexpr quint8 frameSizeScanResponse = 13;
 
 
 EfentoEnvironmentSensor::EfentoEnvironmentSensor()
@@ -69,12 +69,12 @@ float EfentoEnvironmentSensor::getAirPressure()
     return m_airPressure;
 }
 
-unsigned long EfentoEnvironmentSensor::getErrorFlags()
+quint32 EfentoEnvironmentSensor::getErrorFlags()
 {
     return m_errorFlags;
 }
 
-unsigned int EfentoEnvironmentSensor::getWarningFlags()
+quint16 EfentoEnvironmentSensor::getWarningFlags()
 {
     return m_warningFlags;
 }
@@ -102,9 +102,9 @@ void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 {
-    unsigned int oldWarningFlags = m_warningFlags;
+    quint16 oldWarningFlags = m_warningFlags;
     m_warningFlags = 0x00;
-    unsigned char hlpB;
+    quint8 hlpB;
     m_firmwareVersion[0] = manufData.at(7) & 0xF8;
     m_firmwareVersion[0] >>= 3;
     m_firmwareVersion[1] = manufData.at(8);
@@ -121,14 +121,14 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         qInfo("Encryption enabled");
         m_warningFlags |= warningEncryptionEnabled;
     }
-    unsigned int measurementPeriodBase = manufData.at(14);
+    quint16 measurementPeriodBase = manufData.at(14);
     measurementPeriodBase <<= 8;
     measurementPeriodBase += manufData.at(15);
     if (measurementPeriodBase != measurementPeriodBaseZera)
         m_warningFlags |= warningMeasuremPeriBaseFalse;
     if ((manufData.at(16) != 0x00) || (manufData.at(17) != 0x01))
         m_warningFlags |= warningMeasuremPeriFactFalse;
-    unsigned long calibrationDay;
+    quint32 calibrationDay;
     calibrationDay = manufData.at(18);
     calibrationDay <<= 8;
     calibrationDay += manufData.at(19);
@@ -145,7 +145,7 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 {
-    unsigned long oldErrorFlags = m_errorFlags;
+    quint32 oldErrorFlags = m_errorFlags;
     bool valueChanged = false;
     m_errorFlags = 0x00;
     qInfo("Received Measure-Values..");
@@ -163,11 +163,11 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData.at(1) == sensorTypeTemperatur) {
-        unsigned long temperatureRaw = (unsigned char)manufData.at(2);
+        quint32 temperatureRaw = (quint8)manufData.at(2);
         temperatureRaw <<= 8;
-        temperatureRaw += (unsigned char)manufData.at(3);
+        temperatureRaw += (quint8)manufData.at(3);
         temperatureRaw <<= 8;
-        temperatureRaw += (unsigned char)manufData.at(4);
+        temperatureRaw += (quint8)manufData.at(4);
         if (temperatureRaw > tempMaxRawValue)
             m_errorFlags |= errorTempExceedRange;
         else {
@@ -187,11 +187,11 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
 void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData.at(5) == sensorTypeHumidity) {
-        unsigned long humidityRaw = (unsigned char)manufData.at(6);
+        quint32 humidityRaw = (quint8)manufData.at(6);
         humidityRaw <<= 8;
-        humidityRaw += (unsigned char)manufData.at(7);
+        humidityRaw += (quint8)manufData.at(7);
         humidityRaw <<= 8;
-        humidityRaw += (unsigned char)manufData.at(8);
+        humidityRaw += (quint8)manufData.at(8);
         if (humidityRaw > humidityMaxRawValue)
             m_errorFlags |= errorHumidExceedRange;
         else {
@@ -212,11 +212,11 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &
 void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, bool &valueChanged)
 {
     if (manufData.at(9) == sensorTypeAirPressure) {
-        unsigned long airPressunreRaw = (unsigned char)manufData.at(10);
+        quint32 airPressunreRaw = (quint8)manufData.at(10);
         airPressunreRaw <<= 8;
-        airPressunreRaw += (unsigned char)manufData.at(11);
+        airPressunreRaw += (quint8)manufData.at(11);
         airPressunreRaw <<= 8;
-        airPressunreRaw += (unsigned char)manufData.at(12);
+        airPressunreRaw += (quint8)manufData.at(12);
         if (airPressunreRaw > airPressMaxRawValue)
             m_errorFlags |= errorAirPressExceedRange;
         else {
@@ -234,9 +234,9 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
         m_errorFlags |= errorTypeSlot3;
 }
 
-float EfentoEnvironmentSensor::zigzagConvert(unsigned long zigzagVal, float divisor)
+float EfentoEnvironmentSensor::zigzagConvert(quint32 zigzagVal, float divisor)
 {
-    signed long valRaw = zigzagVal;
+    qint32 valRaw = zigzagVal;
     bool isNegative = (valRaw & 0x01);
     if (isNegative)
         valRaw++;

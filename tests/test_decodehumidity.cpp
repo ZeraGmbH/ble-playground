@@ -33,11 +33,9 @@ void test_decodeHumidity::test_minus20PercentHumidity()
 
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
-
     sensor.resetErrorFlagsTest();
     sensor.decodeHumidityTest(ba, valChange);
     QCOMPARE(valChange, true);
     QCOMPARE(sensor.getHumidity(), -20.0);
-    quint32 errorFlag = EfentoEnvironmentSensor::errorHumidValueNegtive;
-    QCOMPARE(sensor.getErrorFlags(), errorFlag);
+    QCOMPARE(sensor.getErrorFlags(), sensor.errorHumidValueNegtive);
 }
