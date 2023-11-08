@@ -13,12 +13,8 @@ static constexpr quint32 tempMaxRawValue = 80000;
 static constexpr quint32 humidityMaxRawValue = 200;
 static constexpr quint16 airPressMaxRawValue = 40000;
 
-static constexpr quint8 frameTypeAdvertisement = 3;
-static constexpr quint8 frameTypeScanResponse = 4;
-
 static constexpr quint8 frameSizeAdvertisment = 20;
 static constexpr quint8 frameSizeScanResponse = 13;
-
 
 EfentoEnvironmentSensor::EfentoEnvironmentSensor()
 {

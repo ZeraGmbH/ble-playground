@@ -12,6 +12,9 @@ public:
     void setBluetoothAddress(QBluetoothAddress address);
     void decode(const QBluetoothDeviceInfo &info) override;
 
+    static constexpr quint8 frameTypeAdvertisement = 3;
+    static constexpr quint8 frameTypeScanResponse = 4;
+
     static constexpr quint32 errorTempUnvalidSlot = 1<<0;
     static constexpr quint32 errorTempExceedRange = 1<<1;
     static constexpr quint32 errorTypeSlot1 = 1<<2;
@@ -43,16 +46,15 @@ signals:
     void sigNewErrors();
 
 protected:
+    bool isValidAdvertismentFrame(const QByteArray &manufData);
+    bool isValidScanResponseFrame(const QByteArray &manufData);
     void decodeTemperature(const QByteArray &manufData, bool &valueChanged);
     void decodeHumidity(const QByteArray &manufData, bool &valueChanged);
     void decodeAirPressure(const QByteArray &manufData, bool &valueChanged);
     static float zigzagConvert(quint32 zigzagVal, float divisor);
     void resetErrorFlags();
 
-
 private:
-    bool isValidAdvertismentFrame(const QByteArray &manufData);
-    bool isValidScanResponseFrame(const QByteArray &manufData);
     void handleInvalid(const QByteArray &manufData);
     void decodeAdvertiseValues(const QByteArray &manufData);
     void decodeMeasureValues(const QByteArray &manufData);
