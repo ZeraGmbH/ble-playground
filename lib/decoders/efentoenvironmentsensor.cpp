@@ -223,7 +223,7 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
             float newAirPressure = zigzagConvert(airPressunreRaw, 10.0);
             if(newAirPressure != m_airPressure) {
                 m_airPressure = newAirPressure;
-                if (airPressunreRaw < 0)
+                if (newAirPressure < 0)
                     m_errorFlags |= errorAirPressValueNegtive;
                 valueChanged = true;
                 qInfo("   -> NEW Air-pressure");
@@ -247,4 +247,9 @@ float EfentoEnvironmentSensor::zigzagConvert(unsigned long zigzagVal, float divi
     float val = valRaw;
     val /= divisor;
     return val;
+}
+
+void EfentoEnvironmentSensor::resetErrorFlags()
+{
+    m_errorFlags = 0;
 }

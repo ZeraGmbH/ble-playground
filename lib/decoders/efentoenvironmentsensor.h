@@ -47,6 +47,8 @@ protected:
     void decodeHumidity(const QByteArray &manufData, bool &valueChanged);
     void decodeAirPressure(const QByteArray &manufData, bool &valueChanged);
     static float zigzagConvert(unsigned long zigzagVal, float divisor);
+    void resetErrorFlags();
+
 
 private:
     bool isValidAdvertismentFrame(const QByteArray &manufData);
