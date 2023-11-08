@@ -25,3 +25,13 @@ void EfentoEnvironmentSensorTest::resetErrorFlagsTest()
     return resetErrorFlags();
 }
 
+bool EfentoEnvironmentSensorTest::isValidAdvertismentFrameTest(const QByteArray &manufData)
+{
+    return isValidAdvertismentFrame(manufData);
+}
+
+bool EfentoEnvironmentSensorTest::isValidScanResponseFrameTest(const QByteArray &manufData)
+{
+    return isValidScanResponseFrame(manufData);
+}
+
