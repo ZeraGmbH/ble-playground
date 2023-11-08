@@ -15,7 +15,7 @@ void EfentoEnvironmentSensorTest::decodeAirPressureTest(const QByteArray &manufD
     decodeAirPressure(manufData, valueChanged);
 }
 
-float EfentoEnvironmentSensorTest::zigzagConvertTest(unsigned long valueRaw, float divisor)
+float EfentoEnvironmentSensorTest::zigzagConvertTest(quint32 valueRaw, float divisor)
 {
     return zigzagConvert(valueRaw, divisor);
 }

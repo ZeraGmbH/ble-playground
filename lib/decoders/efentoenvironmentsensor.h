@@ -12,30 +12,30 @@ public:
     void setBluetoothAddress(QBluetoothAddress address);
     void decode(const QBluetoothDeviceInfo &info) override;
 
-    static constexpr unsigned long errorTempUnvalidSlot = 1<<0;
-    static constexpr unsigned long errorTempExceedRange = 1<<1;
-    static constexpr unsigned long errorTypeSlot1 = 1<<2;
-    static constexpr unsigned long errorTypeSlot2 = 1<<3;
-    static constexpr unsigned long errorTypeSlot3 = 1<<4;
-    static constexpr unsigned long errorHumidExceedRange = 1<<5;
-    static constexpr unsigned long errorAirPressExceedRange = 1<<6;
-    static constexpr unsigned long errorHumidValueNegtive = 1<<7;
-    static constexpr unsigned long errorAirPressValueNegtive = 1<<8;
-    static constexpr unsigned long errorFrameTypeNotValid = 1<<9;
+    static constexpr quint32 errorTempUnvalidSlot = 1<<0;
+    static constexpr quint32 errorTempExceedRange = 1<<1;
+    static constexpr quint32 errorTypeSlot1 = 1<<2;
+    static constexpr quint32 errorTypeSlot2 = 1<<3;
+    static constexpr quint32 errorTypeSlot3 = 1<<4;
+    static constexpr quint32 errorHumidExceedRange = 1<<5;
+    static constexpr quint32 errorAirPressExceedRange = 1<<6;
+    static constexpr quint32 errorHumidValueNegtive = 1<<7;
+    static constexpr quint32 errorAirPressValueNegtive = 1<<8;
+    static constexpr quint32 errorFrameTypeNotValid = 1<<9;
 
-    static constexpr unsigned long warningLowBattery = 1<<0;
-    static constexpr unsigned long warningEncryptionEnabled = 1<<1;
-    static constexpr unsigned long warningMeasuremPeriBaseFalse = 1<<2;
-    static constexpr unsigned long warningMeasuremPeriFactFalse = 1<<3;
-    static constexpr unsigned long warningNoCalibDateSet = 1<<4;
+    static constexpr quint32 warningLowBattery = 1<<0;
+    static constexpr quint32 warningEncryptionEnabled = 1<<1;
+    static constexpr quint32 warningMeasuremPeriBaseFalse = 1<<2;
+    static constexpr quint32 warningMeasuremPeriFactFalse = 1<<3;
+    static constexpr quint32 warningNoCalibDateSet = 1<<4;
 
     bool isConnected();
     float getTemperaturInC();
     float getTemperaturInF();
     float getHumidity();
     float getAirPressure();
-    unsigned long getErrorFlags();
-    unsigned int getWarningFlags();
+    quint32 getErrorFlags();
+    quint16 getWarningFlags();
 signals:
     void sigChangeConnectState();
     void sigNewValues();
@@ -46,7 +46,7 @@ protected:
     void decodeTemperature(const QByteArray &manufData, bool &valueChanged);
     void decodeHumidity(const QByteArray &manufData, bool &valueChanged);
     void decodeAirPressure(const QByteArray &manufData, bool &valueChanged);
-    static float zigzagConvert(unsigned long zigzagVal, float divisor);
+    static float zigzagConvert(quint32 zigzagVal, float divisor);
     void resetErrorFlags();
 
 
@@ -58,9 +58,9 @@ private:
     void decodeMeasureValues(const QByteArray &manufData);
 
     QBluetoothAddress m_address;
-    unsigned long m_errorFlags;
-    unsigned int m_warningFlags;
-    unsigned char m_firmwareVersion[3];
+    quint32 m_errorFlags;
+    quint16 m_warningFlags;
+    quint8 m_firmwareVersion[3];
     float m_temperaturInC;
     float m_temperaturInF;
     float m_humidity;

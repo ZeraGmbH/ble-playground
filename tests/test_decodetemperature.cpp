@@ -7,20 +7,6 @@
 QTEST_MAIN(test_decodeTemperature)
 
 
-
-//void test_decodeTemperature::test_emptyManufData()
-//{
-//    QByteArray ba;
-//    ba.resize(1);
-//    ba[0] = 0x04;
-//    // check ba.length() ?
-
-//    EfentoEnvironmentSensorTest sensor;
-//    bool valChange = false;
-//    sensor.decodeTemperatureTest(ba, valChange);
-//    QCOMPARE(sensor.getTemperaturInC(), -20.0);
-//}
-
 void test_decodeTemperature::test_minus40DegreeCelsius()
 {
     QByteArray ba;
@@ -120,5 +106,6 @@ void test_decodeTemperature::test_rangeOverflow()
     EfentoEnvironmentSensorTest sensor;
     bool valChange = false;
     sensor.decodeTemperatureTest(ba, valChange);
-    QVERIFY(sensor.getErrorFlags() & sensor.errorTempExceedRange);
+    quint32 err = EfentoEnvironmentSensor::errorTempExceedRange;
+    QVERIFY(sensor.getErrorFlags() & err);
 }
