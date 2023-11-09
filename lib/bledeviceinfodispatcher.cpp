@@ -1,20 +1,19 @@
 #include "bledeviceinfodispatcher.h"
 
-int BleDeviceInfoDispatcher::m_currentId = 0;
-
-int BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
+BleDispatcherId BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
 {
-    m_currentId++;
+    BleDispatcherId id = BleDispatcherId::create();
     if(decoder)
-        m_decoders[m_currentId] = std::move(decoder);
-    return m_currentId;
+        m_decoders[id.value()] = std::move(decoder);
+    return id;
 }
 
-BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::removeBleDecoder(int idReturnedOnAdd)
+BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::removeBleDecoder(BleDispatcherId idReturnedOnAdd)
 {
-    if(m_decoders.find(idReturnedOnAdd) != m_decoders.end()) {
-        BluetoothDeviceInfoDecoderPtr decoder = std::move(m_decoders[idReturnedOnAdd]);
-        m_decoders.erase(idReturnedOnAdd);
+    int key = idReturnedOnAdd.value();
+    if(m_decoders.find(key) != m_decoders.end()) {
+        BluetoothDeviceInfoDecoderPtr decoder = std::move(m_decoders[key]);
+        m_decoders.erase(key);
         return decoder;
     }
     else
