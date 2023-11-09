@@ -9,7 +9,7 @@ class EfentoEnvironmentSensor : public BluetoothDeviceInfoDecoder
     Q_OBJECT
 public:
     EfentoEnvironmentSensor();
-    void setBluetoothAddress(QBluetoothAddress address);
+    void setBluetoothAddress(QBluetoothAddress validAddress);
     void decode(const QBluetoothDeviceInfo &info) override;
 
     static constexpr quint8 frameTypeAdvertisement = 3;
