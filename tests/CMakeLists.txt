@@ -5,5 +5,6 @@ SETUP_QTESTS(
     test_decodehumidity
     test_decodeairpressure
     test_framevaliditytype
+    test_bledeviceinfodispatcher
 )
 

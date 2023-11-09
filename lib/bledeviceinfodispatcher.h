@@ -2,23 +2,21 @@
 #define BLEDEVICEINFODISPATCHER_H
 
 #include "bluetoothdeviceinfodecoder.h"
-#include <QBluetoothDeviceDiscoveryAgent>
 #include <QObject>
-#include <vector>
+#include <unordered_map>
 
 class BleDeviceInfoDispatcher : public QObject
 {
     Q_OBJECT
 public:
-    BleDeviceInfoDispatcher();
-    void addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder);
-    void start();
+    int addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder);
+    BluetoothDeviceInfoDecoderPtr removeBleDecoder(int idReturnedOnAdd);
+public slots:
+    void onDeviceDiscovered(const QBluetoothDeviceInfo &device);
 
-private slots:
-    void deviceDiscovered(const QBluetoothDeviceInfo &device);
 private:
-    QBluetoothDeviceDiscoveryAgent m_deviceDiscoveryAgent;
-    std::vector<BluetoothDeviceInfoDecoderPtr> m_decoders;
+    std::unordered_map<int, BluetoothDeviceInfoDecoderPtr> m_decoders;
+    static int m_currentId;
 };
 
 #endif // BLEDEVICEINFODISPATCHER_H

@@ -1,3 +1,4 @@
+#include "bledevicedisoverer.h"
 #include "bledeviceinfodispatcher.h"
 #include "efentoenvironmentsensor.h"
 #include "bluetoothsniffer.h"
@@ -9,13 +10,11 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     BleDeviceInfoDispatcher bleDispatcher;
+    bleDispatcher.addBleDecoder(std::make_unique<BluetoothSniffer>());
 
-    BluetoothDeviceInfoDecoderPtr sniffer = std::make_shared<BluetoothSniffer>();
-    bleDispatcher.addBleDecoder(sniffer);
-
-    std::shared_ptr<EfentoEnvironmentSensor> efentoSensor = std::make_shared<EfentoEnvironmentSensor>();
+    std::unique_ptr<EfentoEnvironmentSensor> efentoSensor = std::make_unique<EfentoEnvironmentSensor>();
     efentoSensor->setBluetoothAddress(QBluetoothAddress("28:2C:02:41:8C:B1"));
-    bleDispatcher.addBleDecoder(efentoSensor);
+    bleDispatcher.addBleDecoder(std::move(efentoSensor));
 
     a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigChangeConnectState, [&efentoSensor]() {
         qInfo(efentoSensor->isConnected() ? "Connected" : "Disonnected");
@@ -26,7 +25,11 @@ int main(int argc, char *argv[])
         qInfo("Humidity: %f", efentoSensor->getHumidity());
         qInfo("Pressure[hP]: %f", efentoSensor->getAirPressure());
     });
-    bleDispatcher.start();
+
+    BleDeviceDisoverer bleDiscoverer;
+    QObject::connect(&bleDiscoverer, &BleDeviceDisoverer::sigDeviceDiscovered,
+                     &bleDispatcher, &BleDeviceInfoDispatcher::onDeviceDiscovered);
+    bleDiscoverer.start();
 
     return a.exec();
 }

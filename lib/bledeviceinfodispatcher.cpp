@@ -1,24 +1,28 @@
 #include "bledeviceinfodispatcher.h"
 
-BleDeviceInfoDispatcher::BleDeviceInfoDispatcher()
+int BleDeviceInfoDispatcher::m_currentId = 0;
+
+int BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
 {
+    m_currentId++;
+    if(decoder)
+        m_decoders[m_currentId] = std::move(decoder);
+    return m_currentId;
 }
 
-void BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
+BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::removeBleDecoder(int idReturnedOnAdd)
 {
-    m_decoders.push_back(decoder);
+    if(m_decoders.find(idReturnedOnAdd) != m_decoders.end()) {
+        BluetoothDeviceInfoDecoderPtr decoder = std::move(m_decoders[idReturnedOnAdd]);
+        m_decoders.erase(idReturnedOnAdd);
+        return decoder;
+    }
+    else
+        return BluetoothDeviceInfoDecoderPtr();
 }
 
-void BleDeviceInfoDispatcher::start()
+void BleDeviceInfoDispatcher::onDeviceDiscovered(const QBluetoothDeviceInfo &device)
 {
-    connect(&m_deviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BleDeviceInfoDispatcher::deviceDiscovered);
-    constexpr int permanentScanActive = 0;
-    m_deviceDiscoveryAgent.setLowEnergyDiscoveryTimeout(permanentScanActive);
-    m_deviceDiscoveryAgent.start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
-}
-
-void BleDeviceInfoDispatcher::deviceDiscovered(const QBluetoothDeviceInfo &device)
-{
-    for(auto &decoder : m_decoders)
-        decoder->decode(device);
+    for(auto iter=m_decoders.cbegin(); iter!=m_decoders.cend(); iter++)
+        iter->second->decode(device);
 }
