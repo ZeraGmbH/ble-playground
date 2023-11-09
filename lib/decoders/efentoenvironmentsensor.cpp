@@ -20,9 +20,9 @@ EfentoEnvironmentSensor::EfentoEnvironmentSensor()
 {
 }
 
-void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress address)
+void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
-    m_address = address;
+    m_address = validAddress;
 }
 
 void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
