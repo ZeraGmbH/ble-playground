@@ -13,8 +13,8 @@ void test_bledeviceinfodispatcher::addRemoveIdentityCheck()
     bleMockBar->setName("bar");
 
     BleDeviceInfoDispatcher dispatcher;
-    int fooId = dispatcher.addBleDecoder(std::move(bleMockFoo));
-    int barId = dispatcher.addBleDecoder(std::move(bleMockBar));
+    BleDispatcherId fooId = dispatcher.addBleDecoder(std::move(bleMockFoo));
+    BleDispatcherId barId = dispatcher.addBleDecoder(std::move(bleMockBar));
 
     BluetoothDeviceInfoDecoderPtr bleMockFooDel = dispatcher.removeBleDecoder(fooId);
     BluetoothDeviceInfoDecoderPtr bleMockBarDel = dispatcher.removeBleDecoder(barId);
@@ -27,7 +27,7 @@ void test_bledeviceinfodispatcher::addOneCheckForNotification()
 {
     BluetoothDeviceInfoDecoderMockPtr bleMock = std::make_unique<BluetoothDeviceInfoDecoderMock>();
     BleDeviceInfoDispatcher dispatcher;
-    int id = dispatcher.addBleDecoder(std::move(bleMock));
+    BleDispatcherId id = dispatcher.addBleDecoder(std::move(bleMock));
 
     QBluetoothDeviceInfo bleInfo;
     dispatcher.onDeviceDiscovered(bleInfo);
@@ -41,7 +41,7 @@ void test_bledeviceinfodispatcher::addZeroPointer()
 {
     BluetoothDeviceInfoDecoderMockPtr bleMockZero;
     BleDeviceInfoDispatcher dispatcher;
-    int id = dispatcher.addBleDecoder(std::move(bleMockZero));
+    BleDispatcherId id = dispatcher.addBleDecoder(std::move(bleMockZero));
 
     QBluetoothDeviceInfo bleInfo;
     dispatcher.onDeviceDiscovered(bleInfo);
@@ -53,9 +53,20 @@ void test_bledeviceinfodispatcher::addZeroPointer()
 void test_bledeviceinfodispatcher::removeOnEmptyDispatcher()
 {
     BleDeviceInfoDispatcher dispatcher;
-    BluetoothDeviceInfoDecoderPtr decoder = dispatcher.removeBleDecoder(42);
+    BluetoothDeviceInfoDecoderPtr decoder = dispatcher.removeBleDecoder(BleDispatcherId());
     QBluetoothDeviceInfo bleInfo;
     dispatcher.onDeviceDiscovered(bleInfo);
+    QCOMPARE(decoder, nullptr);
+}
+
+void test_bledeviceinfodispatcher::removeWithInvalidId()
+{
+    BluetoothDeviceInfoDecoderMockPtr bleMockZero;
+    BleDeviceInfoDispatcher dispatcher;
+    dispatcher.addBleDecoder(std::move(bleMockZero));
+
+    BleDispatcherId id;
+    BluetoothDeviceInfoDecoderPtr decoder = dispatcher.removeBleDecoder(id);
     QCOMPARE(decoder, nullptr);
 }
 
@@ -65,10 +76,10 @@ void test_bledeviceinfodispatcher::addTwoRemoveOneCheckForNotification()
     BluetoothDeviceInfoDecoderMockPtr bleMock2 = std::make_unique<BluetoothDeviceInfoDecoderMock>();
 
     BleDeviceInfoDispatcher dispatcher;
-    int id1 = dispatcher.addBleDecoder(std::move(bleMock1));
+    BleDispatcherId id = dispatcher.addBleDecoder(std::move(bleMock1));
     dispatcher.addBleDecoder(std::move(bleMock2));
 
-    BluetoothDeviceInfoDecoderPtr bleMock1Del = dispatcher.removeBleDecoder(id1);
+    BluetoothDeviceInfoDecoderPtr bleMock1Del = dispatcher.removeBleDecoder(id);
 
     QBluetoothDeviceInfo bleInfo;
     dispatcher.onDeviceDiscovered(bleInfo);

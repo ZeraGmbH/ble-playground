@@ -11,6 +11,7 @@ private slots:
     void addOneCheckForNotification();
     void addZeroPointer();
     void removeOnEmptyDispatcher();
+    void removeWithInvalidId();
     void addTwoRemoveOneCheckForNotification();
 };
 
