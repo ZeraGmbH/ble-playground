@@ -17,6 +17,6 @@ private:
     int m_decodeCount = 0;
 };
 
-typedef std::unique_ptr<BluetoothDeviceInfoDecoderMock> BluetoothDeviceInfoDecoderMockPtr;
+typedef std::shared_ptr<BluetoothDeviceInfoDecoderMock> BluetoothDeviceInfoDecoderMockPtr;
 
 #endif // BLUETOOTHDEVICEINFODECODERMOCK_H

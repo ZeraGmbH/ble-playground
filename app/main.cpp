@@ -10,11 +10,11 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     BleDeviceInfoDispatcher bleDispatcher;
-    bleDispatcher.addBleDecoder(std::make_unique<BluetoothSniffer>());
+    bleDispatcher.addBleDecoder(std::make_shared<BluetoothSniffer>());
 
-    std::unique_ptr<EfentoEnvironmentSensor> efentoSensor = std::make_unique<EfentoEnvironmentSensor>();
+    std::shared_ptr<EfentoEnvironmentSensor> efentoSensor = std::make_shared<EfentoEnvironmentSensor>();
     efentoSensor->setBluetoothAddress(QBluetoothAddress("28:2C:02:41:8C:B1"));
-    bleDispatcher.addBleDecoder(std::move(efentoSensor));
+    bleDispatcher.addBleDecoder(efentoSensor);
 
     a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigChangeConnectState, [&efentoSensor]() {
         qInfo(efentoSensor->isConnected() ? "Connected" : "Disonnected");
