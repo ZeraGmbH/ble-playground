@@ -73,7 +73,9 @@ void test_bledeviceinfodispatcher::removeWithInvalidId()
 void test_bledeviceinfodispatcher::addTwoRemoveOneCheckForNotification()
 {
     BluetoothDeviceInfoDecoderMockPtr bleMock1 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock1->setName("1");
     BluetoothDeviceInfoDecoderMockPtr bleMock2 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock2->setName("2");
 
     BleDeviceInfoDispatcher dispatcher;
     BleDispatcherId id = dispatcher.addBleDecoder(bleMock1);
@@ -84,5 +86,48 @@ void test_bledeviceinfodispatcher::addTwoRemoveOneCheckForNotification()
     QBluetoothDeviceInfo bleInfo;
     dispatcher.onDeviceDiscovered(bleInfo);
     dispatcher.onDeviceDiscovered(bleInfo);
+
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock1Del.get())->getName(), "1");
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock1.get())->getDecodeCount(), 0);
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock2.get())->getDecodeCount(), 2);
 }
 
+void test_bledeviceinfodispatcher::addTwoRemoveOneTwice()
+{
+    BluetoothDeviceInfoDecoderMockPtr bleMock1 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock1->setName("1");
+    BluetoothDeviceInfoDecoderMockPtr bleMock2 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock2->setName("2");
+
+    BleDeviceInfoDispatcher dispatcher;
+    BleDispatcherId id = dispatcher.addBleDecoder(bleMock1);
+    dispatcher.addBleDecoder(bleMock2);
+
+    BluetoothDeviceInfoDecoderPtr bleMock1Del = dispatcher.removeBleDecoder(id);
+    BluetoothDeviceInfoDecoderPtr bleMock1DelRepeat = dispatcher.removeBleDecoder(id);
+
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock1Del.get())->getName(), "1");
+    QCOMPARE(bleMock1DelRepeat, nullptr);
+}
+
+void test_bledeviceinfodispatcher::addTwoAndFind()
+{
+    BluetoothDeviceInfoDecoderMockPtr bleMock1 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock1->setName("1");
+    BluetoothDeviceInfoDecoderMockPtr bleMock2 = std::make_shared<BluetoothDeviceInfoDecoderMock>();
+    bleMock2->setName("2");
+
+    BleDeviceInfoDispatcher dispatcher;
+    BleDispatcherId id1 = dispatcher.addBleDecoder(bleMock1);
+    BleDispatcherId id2 = dispatcher.addBleDecoder(bleMock2);
+
+    BluetoothDeviceInfoDecoderPtr bleMock1Found = dispatcher.findBleDecoder(id1);
+    BluetoothDeviceInfoDecoderPtr bleMock2Found = dispatcher.findBleDecoder(id2);
+    BluetoothDeviceInfoDecoderPtr bleMock1FoundRepeat = dispatcher.findBleDecoder(id1);
+    BluetoothDeviceInfoDecoderPtr bleMock2FoundRepeat = dispatcher.findBleDecoder(id2);
+
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock1Found.get())->getName(), "1");
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock2Found.get())->getName(), "2");
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock1FoundRepeat.get())->getName(), "1");
+    QCOMPARE(static_cast<BluetoothDeviceInfoDecoderMock*>(bleMock2FoundRepeat.get())->getName(), "2");
+}

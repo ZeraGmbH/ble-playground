@@ -12,6 +12,7 @@ class BleDeviceInfoDispatcher : public QObject
 public:
     BleDispatcherId addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder);
     BluetoothDeviceInfoDecoderPtr removeBleDecoder(BleDispatcherId idReturnedOnAdd);
+    BluetoothDeviceInfoDecoderPtr findBleDecoder(BleDispatcherId idReturnedOnAdd);
 public slots:
     void onDeviceDiscovered(const QBluetoothDeviceInfo &device);
 
