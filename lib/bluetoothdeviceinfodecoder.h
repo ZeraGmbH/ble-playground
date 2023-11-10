@@ -15,6 +15,6 @@ signals:
 
 };
 
-typedef std::unique_ptr<BluetoothDeviceInfoDecoder> BluetoothDeviceInfoDecoderPtr;
+typedef std::shared_ptr<BluetoothDeviceInfoDecoder> BluetoothDeviceInfoDecoderPtr;
 
 #endif // BLUETOOTHDEVICEINFODECODER_H

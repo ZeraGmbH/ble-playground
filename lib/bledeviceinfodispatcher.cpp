@@ -4,7 +4,7 @@ BleDispatcherId BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecode
 {
     BleDispatcherId id = BleDispatcherId::create();
     if(decoder)
-        m_decoders[id.value()] = std::move(decoder);
+        m_decoders[id.value()] = decoder;
     return id;
 }
 
@@ -12,7 +12,7 @@ BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::removeBleDecoder(BleDispa
 {
     int key = idReturnedOnAdd.value();
     if(m_decoders.find(key) != m_decoders.end()) {
-        BluetoothDeviceInfoDecoderPtr decoder = std::move(m_decoders[key]);
+        BluetoothDeviceInfoDecoderPtr decoder = m_decoders[key];
         m_decoders.erase(key);
         return decoder;
     }
