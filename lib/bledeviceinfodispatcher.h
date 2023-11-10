@@ -4,7 +4,7 @@
 #include "bledispatcherid.h"
 #include "bluetoothdeviceinfodecoder.h"
 #include <QObject>
-#include <unordered_map>
+#include <QHash>
 
 class BleDeviceInfoDispatcher : public QObject
 {
@@ -16,7 +16,7 @@ public slots:
     void onDeviceDiscovered(const QBluetoothDeviceInfo &device);
 
 private:
-    std::unordered_map<int, BluetoothDeviceInfoDecoderPtr> m_decoders;
+    QHash<int, BluetoothDeviceInfoDecoderPtr> m_decoders;
 };
 
 #endif // BLEDEVICEINFODISPATCHER_H
