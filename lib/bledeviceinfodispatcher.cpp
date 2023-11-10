@@ -17,6 +17,15 @@ BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::removeBleDecoder(BleDispa
         return BluetoothDeviceInfoDecoderPtr();
 }
 
+BluetoothDeviceInfoDecoderPtr BleDeviceInfoDispatcher::findBleDecoder(BleDispatcherId idReturnedOnAdd)
+{
+    int key = idReturnedOnAdd.value();
+    if(m_decoders.find(key) != m_decoders.end())
+        return m_decoders.value(key);
+    else
+        return BluetoothDeviceInfoDecoderPtr();
+}
+
 void BleDeviceInfoDispatcher::onDeviceDiscovered(const QBluetoothDeviceInfo &device)
 {
     for(auto iter=m_decoders.cbegin(); iter!=m_decoders.cend(); iter++)

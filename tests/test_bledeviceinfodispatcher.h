@@ -13,6 +13,8 @@ private slots:
     void removeOnEmptyDispatcher();
     void removeWithInvalidId();
     void addTwoRemoveOneCheckForNotification();
+    void addTwoRemoveOneTwice();
+    void addTwoAndFind();
 };
 
 #endif // TEST_BLEDEVICEINFODISPATCHER_H
