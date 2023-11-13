@@ -12,6 +12,7 @@ public:
     BluetoothConvenienceFacade();
     void start();
     void stop();
+    bool isOn();
     BleDispatcherId addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder);
     BluetoothDeviceInfoDecoderPtr removeBleDecoder(BleDispatcherId idReturnedOnAdd);
     BluetoothDeviceInfoDecoderPtr findBleDecoder(BleDispatcherId idReturnedOnAdd);
