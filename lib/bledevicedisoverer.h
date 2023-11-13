@@ -9,6 +9,7 @@ class BleDeviceDisoverer : public QObject
     Q_OBJECT
 public:
     void start();
+    void stop();
 signals:
     void sigDeviceDiscovered(const QBluetoothDeviceInfo &device);
 private:

@@ -7,3 +7,8 @@ void BleDeviceDisoverer::start()
     m_deviceDiscoveryAgent.setLowEnergyDiscoveryTimeout(permanentScanActive);
     m_deviceDiscoveryAgent.start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 }
+
+void BleDeviceDisoverer::stop()
+{
+    m_deviceDiscoveryAgent.stop();
+}
