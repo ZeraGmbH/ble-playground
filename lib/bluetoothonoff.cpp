@@ -17,6 +17,11 @@ void BluetoothOnOff::switchOff()
     m_bluetoothDevice.setHostMode(QBluetoothLocalDevice::HostPoweredOff);
 }
 
+bool BluetoothOnOff::isOn()
+{
+    return m_on;
+}
+
 void BluetoothOnOff::onHostModeChanged(QBluetoothLocalDevice::HostMode state)
 {
     bool on = state != QBluetoothLocalDevice::HostPoweredOff;
