@@ -7,7 +7,6 @@ class BluetoothSniffer : public BluetoothDeviceInfoDecoder
 {
     Q_OBJECT
 public:
-    BluetoothSniffer();
     void decode(const QBluetoothDeviceInfo &info) override;
 };
 

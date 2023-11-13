@@ -16,10 +16,6 @@ static constexpr quint16 airPressMaxRawValue = 40000;
 static constexpr quint8 frameSizeAdvertisment = 20;
 static constexpr quint8 frameSizeScanResponse = 13;
 
-EfentoEnvironmentSensor::EfentoEnvironmentSensor()
-{
-}
-
 void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
     m_address = validAddress;
@@ -77,17 +73,15 @@ quint16 EfentoEnvironmentSensor::getWarningFlags()
 
 bool EfentoEnvironmentSensor::isValidAdvertismentFrame(const QByteArray &manufData)
 {
-    if (manufData.length() >= frameSizeAdvertisment) {
+    if (manufData.length() >= frameSizeAdvertisment)
         return manufData.at(0) == frameTypeAdvertisement;
-    }
     return false;
 }
 
 bool EfentoEnvironmentSensor::isValidScanResponseFrame(const QByteArray &manufData)
 {
-    if (manufData.length() >= frameSizeScanResponse) {
+    if (manufData.length() >= frameSizeScanResponse)
         return manufData.at(0) == frameTypeScanResponse;
-    }
     return false;
 }
 
