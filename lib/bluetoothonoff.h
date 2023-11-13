@@ -9,7 +9,7 @@ class BluetoothOnOff : public QObject
     Q_OBJECT
 public:
     BluetoothOnOff();
-    void switchOn(QBluetoothLocalDevice::HostMode hostMode = QBluetoothLocalDevice::HostConnectable);
+    void switchOn();
     void switchOff();
     bool isOn();
 signals:
