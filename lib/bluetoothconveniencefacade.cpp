@@ -53,4 +53,5 @@ void BluetoothConvenienceFacade::onOnOff(bool on)
         restartDiscoverer();
     else
         m_bleDiscoverer.stop();
+    emit sigOnOff(on);
 }
