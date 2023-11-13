@@ -27,6 +27,11 @@ void BluetoothConvenienceFacade::stop()
     m_bluetoothOnOff.switchOff();
 }
 
+bool BluetoothConvenienceFacade::isOn()
+{
+    return m_bluetoothOnOff.isOn();
+}
+
 BleDispatcherId BluetoothConvenienceFacade::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
 {
     return m_bleDispatcher.addBleDecoder(decoder);
