@@ -3,13 +3,15 @@
 BluetoothOnOff::BluetoothOnOff():
     m_on(m_bluetoothDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
 {
+    if(!m_bluetoothDevice.isValid())
+        qWarning("Invalid Bluetooth local device!");
     connect(&m_bluetoothDevice, &QBluetoothLocalDevice::hostModeStateChanged,
             this, &BluetoothOnOff::onHostModeChanged);
 }
 
 void BluetoothOnOff::switchOn(QBluetoothLocalDevice::HostMode hostMode)
 {
-    m_bluetoothDevice.setHostMode(hostMode);
+    m_bluetoothDevice.powerOn(); //setHostMode(hostMode);
 }
 
 void BluetoothOnOff::switchOff()
