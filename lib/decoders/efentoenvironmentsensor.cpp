@@ -92,7 +92,6 @@ void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 {
-    quint16 oldWarningFlags = m_warningFlags;
     m_warningFlags = 0x00;
     quint8 hlpB;
     m_firmwareVersion[0] = manufData.at(7) & 0xF8;
@@ -127,31 +126,23 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     QDate calibDate(1970, 1, 1);
     calibDate = calibDate.addDays(calibrationDay);
     m_lastCalibration = calibDate.toString("dd.MM.yyyy");
-
-    if(oldWarningFlags != m_warningFlags)
-        emit sigNewWarnings();
+    emit sigNewWarnings();
     qInfo("Received ASdvertise-Values..");
 }
 
 void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 {
-    bool valueChanged = false;
     m_errorFlags = 0x00;
     qInfo("Received Measure-Values..");
-    decodeTemperature(manufData, valueChanged);
-    decodeHumidity(manufData, valueChanged);
-    decodeAirPressure(manufData, valueChanged);
+    decodeTemperature(manufData);
+    decodeHumidity(manufData);
+    decodeAirPressure(manufData);
     if (!m_errorFlags)
         emit sigNewValues();
-    if(valueChanged) {
-        qInfo("Values changed");
-        //qInfo("   -> %2.2f°C  %2.2f°F  %2.0f%% RH  %2.2f hPa", m_temperaturInC, m_temperaturInF, m_humidity, m_airPressure);
-    }
-    if(m_errorFlags)
-        emit sigNewErrors();
+    emit sigNewErrors();
 }
 
-void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)
 {
     if (manufData.at(1) == sensorTypeTemperatur) {
         quint32 temperatureRaw = (quint8)manufData.at(2);
@@ -162,19 +153,15 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
         if (temperatureRaw > tempMaxRawValue)
             m_errorFlags |= errorTempExceedRange;
         else {
-            float newTemp = zigzagConvert(temperatureRaw, 10.0);
-            if(m_temperaturInC != newTemp) {
-                m_temperaturInC = newTemp;
-                m_temperaturInF = TemperatureConverter::celsiusToFahrenheit(m_temperaturInC);
-                valueChanged = true;
-            }
+            m_temperaturInC = zigzagConvert(temperatureRaw, 10.0);
+            m_temperaturInF = TemperatureConverter::celsiusToFahrenheit(m_temperaturInC);
         }
     }
     else
         m_errorFlags |= errorTypeSlot1;
 }
 
-void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData)
 {
     if (manufData.at(5) == sensorTypeHumidity) {
         quint32 humidityRaw = (quint8)manufData.at(6);
@@ -185,20 +172,16 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &
         if (humidityRaw > humidityMaxRawValue)
             m_errorFlags |= errorHumidExceedRange;
         else {
-            float newHumidity = zigzagConvert(humidityRaw, 1.0);
-            if(newHumidity != m_humidity) {
-                m_humidity = newHumidity;
-                if (m_humidity < 0)
-                    m_errorFlags |= errorHumidValueNegtive;
-                valueChanged = true;
-            }
+            m_humidity = zigzagConvert(humidityRaw, 1.0);
+            if (m_humidity < 0)
+                m_errorFlags |= errorHumidValueNegtive;
         }
     }
     else
         m_errorFlags |= errorTypeSlot2;
 }
 
-void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData)
 {
     if (manufData.at(9) == sensorTypeAirPressure) {
         quint32 airPressunreRaw = (quint8)manufData.at(10);
@@ -209,13 +192,9 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
         if (airPressunreRaw > airPressMaxRawValue)
             m_errorFlags |= errorAirPressExceedRange;
         else {
-            float newAirPressure = zigzagConvert(airPressunreRaw, 10.0);
-            if(newAirPressure != m_airPressure) {
-                m_airPressure = newAirPressure;
-                if (newAirPressure < 0)
-                    m_errorFlags |= errorAirPressValueNegtive;
-                valueChanged = true;
-            }
+            m_airPressure = zigzagConvert(airPressunreRaw, 10.0);
+            if (m_airPressure < 0)
+                m_errorFlags |= errorAirPressValueNegtive;
         }
     }
     else

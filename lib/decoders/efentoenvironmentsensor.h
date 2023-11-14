@@ -47,9 +47,9 @@ signals:
 protected:
     bool isValidAdvertismentFrame(const QByteArray &manufData);
     bool isValidScanResponseFrame(const QByteArray &manufData);
-    void decodeTemperature(const QByteArray &manufData, bool &valueChanged);
-    void decodeHumidity(const QByteArray &manufData, bool &valueChanged);
-    void decodeAirPressure(const QByteArray &manufData, bool &valueChanged);
+    void decodeTemperature(const QByteArray &manufData);
+    void decodeHumidity(const QByteArray &manufData);
+    void decodeAirPressure(const QByteArray &manufData);
     static float zigzagConvert(quint32 zigzagVal, float divisor);
     void resetErrorFlags();
 

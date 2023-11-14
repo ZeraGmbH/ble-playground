@@ -15,9 +15,7 @@ void test_decodeAirPressure::test_500hPaAirPressure()
     ba[11] = 0x27;
     ba[12] = 0x10;
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeAirPressureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeAirPressureTest(ba);
     QCOMPARE(sensor.getAirPressure(), 500.0);
 }
 
@@ -30,10 +28,8 @@ void test_decodeAirPressure::test_minus500hPaAirPressure()
     ba[11] = 0x27;
     ba[12] = 0x0F;
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
     sensor.resetErrorFlagsTest();
-    sensor.decodeAirPressureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeAirPressureTest(ba);
     QCOMPARE(sensor.getAirPressure(), -500.0);
     quint32 errorFlag = EfentoEnvironmentSensor::errorAirPressValueNegtive;
     QCOMPARE(sensor.getErrorFlags(), errorFlag);
