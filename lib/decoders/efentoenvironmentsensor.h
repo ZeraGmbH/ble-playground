@@ -37,7 +37,7 @@ public:
     float getHumidity();
     float getAirPressure();
     quint32 getErrorFlags();
-    quint16 getWarningFlags();
+    quint32 getWarningFlags();
 signals:
     void sigChangeConnectState();
     void sigNewValues();
@@ -60,7 +60,7 @@ private:
 
     QBluetoothAddress m_address;
     quint32 m_errorFlags;
-    quint16 m_warningFlags;
+    quint32 m_warningFlags;
     quint8 m_firmwareVersion[3];
     float m_temperaturInC;
     float m_temperaturInF;
