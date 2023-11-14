@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
         qInfo(efentoSensor->isConnected() ? "Connected" : "Disonnected");
     });
     a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigNewValues, [&efentoSensor]() {
-        qInfo("Temperatur [°]: %f", efentoSensor->getTemperaturInC());
-        qInfo("Temperatur [F]: %f", efentoSensor->getTemperaturInF());
-        qInfo("Humidity: %f", efentoSensor->getHumidity());
-        qInfo("Pressure[hP]: %f", efentoSensor->getAirPressure());
+//        qInfo("Temperatur [°]: %f", efentoSensor->getTemperaturInC());
+//        qInfo("Temperatur [F]: %f", efentoSensor->getTemperaturInF());
+//        qInfo("Humidity: %f", efentoSensor->getHumidity());
+//        qInfo("Pressure[hP]: %f", efentoSensor->getAirPressure());
     });
 
     BleDeviceDisoverer bleDiscoverer;
