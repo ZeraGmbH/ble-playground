@@ -66,7 +66,7 @@ quint32 EfentoEnvironmentSensor::getErrorFlags()
     return m_errorFlags;
 }
 
-quint16 EfentoEnvironmentSensor::getWarningFlags()
+quint32 EfentoEnvironmentSensor::getWarningFlags()
 {
     return m_warningFlags;
 }
