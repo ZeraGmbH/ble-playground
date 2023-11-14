@@ -135,18 +135,19 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 {
-    quint32 oldErrorFlags = m_errorFlags;
     bool valueChanged = false;
     m_errorFlags = 0x00;
     qInfo("Received Measure-Values..");
     decodeTemperature(manufData, valueChanged);
     decodeHumidity(manufData, valueChanged);
     decodeAirPressure(manufData, valueChanged);
-    if(valueChanged) {
-        qInfo("   -> %2.2f°C  %2.2f°F  %2.0f%% RH  %2.2f hPa", m_temperaturInC, m_temperaturInF, m_humidity, m_airPressure);
+    if (!m_errorFlags)
         emit sigNewValues();
+    if(valueChanged) {
+        qInfo("Values changed");
+        //qInfo("   -> %2.2f°C  %2.2f°F  %2.0f%% RH  %2.2f hPa", m_temperaturInC, m_temperaturInF, m_humidity, m_airPressure);
     }
-    if(oldErrorFlags != m_errorFlags)
+    if(m_errorFlags)
         emit sigNewErrors();
 }
 
