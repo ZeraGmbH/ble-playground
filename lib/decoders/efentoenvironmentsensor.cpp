@@ -167,7 +167,6 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData, boo
                 m_temperaturInC = newTemp;
                 m_temperaturInF = TemperatureConverter::celsiusToFahrenheit(m_temperaturInC);
                 valueChanged = true;
-                qInfo("   -> NEW temperature");
             }
         }
     }
@@ -192,7 +191,6 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData, bool &
                 if (m_humidity < 0)
                     m_errorFlags |= errorHumidValueNegtive;
                 valueChanged = true;
-                qInfo("   -> NEW humidity");
             }
         }
     }
@@ -217,7 +215,6 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData, boo
                 if (newAirPressure < 0)
                     m_errorFlags |= errorAirPressValueNegtive;
                 valueChanged = true;
-                qInfo("   -> NEW Air-pressure");
             }
         }
     }
