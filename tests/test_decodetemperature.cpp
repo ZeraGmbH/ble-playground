@@ -18,9 +18,7 @@ void test_decodeTemperature::test_minus40DegreeCelsius()
     ba[4] = 0x1F;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeTemperatureTest(ba);
     QCOMPARE(sensor.getTemperaturInC(), -40.0);
 }
 
@@ -35,9 +33,7 @@ void test_decodeTemperature::test_minus20DegreeCelsius()
     ba[4] = 0x8F;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeTemperatureTest(ba);
     QCOMPARE(sensor.getTemperaturInC(), -20.0);
 }
 
@@ -52,9 +48,7 @@ void test_decodeTemperature::test_0DegreeCelsius()
     ba[4] = 0x00;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeTemperatureTest(ba);
     QCOMPARE(sensor.getTemperaturInC(), 0.0);
 }
 
@@ -69,9 +63,7 @@ void test_decodeTemperature::test_plus20DegreeCelsius()
     ba[4] = 0x90;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeTemperatureTest(ba);
     QCOMPARE(sensor.getTemperaturInC(), 20.0);
 }
 
@@ -86,9 +78,7 @@ void test_decodeTemperature::test_plus40DegreeCelsius()
     ba[4] = 0x20;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
-    QCOMPARE(valChange, true);
+    sensor.decodeTemperatureTest(ba);
     QCOMPARE(sensor.getTemperaturInC(), 40.0);
     QVERIFY(sensor.getTemperaturInC() !=  40.1);
 }
@@ -104,8 +94,7 @@ void test_decodeTemperature::test_rangeOverflow()
     ba[4] = 0x81;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
-    sensor.decodeTemperatureTest(ba, valChange);
+    sensor.decodeTemperatureTest(ba);
     quint32 err = EfentoEnvironmentSensor::errorTempExceedRange;
     QVERIFY(sensor.getErrorFlags() & err);
 }

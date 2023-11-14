@@ -7,9 +7,9 @@ class EfentoEnvironmentSensorTest : public EfentoEnvironmentSensor
 {
     Q_OBJECT
 public:
-    void decodeTemperatureTest(const QByteArray &manufData, bool &valueChanged);
-    void decodeHumidityTest(const QByteArray &manufData, bool &valueChanged);
-    void decodeAirPressureTest(const QByteArray &manufData, bool &valueChanged);
+    void decodeTemperatureTest(const QByteArray &manufData);
+    void decodeHumidityTest(const QByteArray &manufData);
+    void decodeAirPressureTest(const QByteArray &manufData);
     static float zigzagConvertTest(quint32 valueRaw, float divisor);
     void resetErrorFlagsTest();
     bool isValidAdvertismentFrameTest(const QByteArray &manufData);

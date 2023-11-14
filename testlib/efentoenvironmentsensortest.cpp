@@ -1,18 +1,18 @@
 #include "efentoenvironmentsensortest.h"
 
-void EfentoEnvironmentSensorTest::decodeTemperatureTest(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensorTest::decodeTemperatureTest(const QByteArray &manufData)
 {
-    decodeTemperature(manufData, valueChanged);
+    decodeTemperature(manufData);
 }
 
-void EfentoEnvironmentSensorTest::decodeHumidityTest(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensorTest::decodeHumidityTest(const QByteArray &manufData)
 {
-    decodeHumidity(manufData, valueChanged);
+    decodeHumidity(manufData);
 }
 
-void EfentoEnvironmentSensorTest::decodeAirPressureTest(const QByteArray &manufData, bool &valueChanged)
+void EfentoEnvironmentSensorTest::decodeAirPressureTest(const QByteArray &manufData)
 {
-    decodeAirPressure(manufData, valueChanged);
+    decodeAirPressure(manufData);
 }
 
 float EfentoEnvironmentSensorTest::zigzagConvertTest(quint32 valueRaw, float divisor)
