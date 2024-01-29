@@ -17,6 +17,7 @@ target_link_libraries(ble-sensors
     PUBLIC
     Qt5::Core
     Qt5::Bluetooth
+    Zera::zera-timers
     )
 
 target_include_directories(ble-sensors

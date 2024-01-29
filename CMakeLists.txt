@@ -15,6 +15,7 @@ include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
 find_package(Qt5 COMPONENTS Core Network Bluetooth Test REQUIRED)
+find_package(ZenuxCore REQUIRED)
 
 enable_testing()
 

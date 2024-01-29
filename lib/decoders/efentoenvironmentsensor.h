@@ -3,6 +3,8 @@
 
 #include "bluetoothdeviceinfodecoder.h"
 #include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
+#include <timerfactoryqt.h>
+#include <QDateTime>
 
 class EfentoEnvironmentSensor : public BluetoothDeviceInfoDecoder
 {
@@ -30,6 +32,7 @@ public:
     static constexpr quint32 warningMeasuremPeriBaseFalse = 1<<2;
     static constexpr quint32 warningMeasuremPeriFactFalse = 1<<3;
     static constexpr quint32 warningNoCalibDateSet = 1<<4;
+    static constexpr quint32 warningSensorLost = 1<<5;
 
     bool isConnected();
     float getTemperaturInC();
@@ -57,6 +60,8 @@ private:
     void handleInvalid(const QByteArray &manufData);
     void decodeAdvertiseValues(const QByteArray &manufData);
     void decodeMeasureValues(const QByteArray &manufData);
+    void checkTimer();
+    void resetMeasureValues();
 
     QBluetoothAddress m_address;
     quint32 m_errorFlags;
@@ -67,7 +72,10 @@ private:
     float m_humidity;
     float m_airPressure;
     QString m_lastCalibration;
-    bool m_isConnected;
+    bool m_isConnected = false;
+    TimerTemplateQtPtr m_periodicTimer;
+    QTime m_lastRecceivedTemperature {0, 0, 0, 0};
+
 };
 
 #endif // EFENTOENVIRONMENTSENSOR_H

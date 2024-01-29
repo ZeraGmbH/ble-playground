@@ -1,6 +1,7 @@
 #include "efentoenvironmentsensor.h"
 #include "temperatureconverter.h"
 #include <QDate>
+#include <timerfactoryqt.h>
 
 static constexpr qint16 ManufId = 0x026C;
 
@@ -19,6 +20,26 @@ static constexpr quint8 frameSizeScanResponse = 13;
 void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
     m_address = validAddress;
+
+    m_periodicTimer = TimerFactoryQt::createPeriodic(5000);
+    connect(m_periodicTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::checkTimer);
+    m_periodicTimer->start();
+}
+
+void EfentoEnvironmentSensor::checkTimer()
+{
+    if(!isConnected())          // only interesting if once connected to BLE sensor
+        return;
+    QTime aktTime = QTime::currentTime();
+    aktTime = aktTime.addSecs(-5);
+    if(aktTime > m_lastRecceivedTemperature) {
+        EfentoEnvironmentSensor::resetMeasureValues();
+        m_warningFlags |= warningSensorLost;
+        //qInfo("BLE Sensor lost");
+        emit sigNewValues();
+    }
+    else
+        m_warningFlags &= ~warningSensorLost;
 }
 
 void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
@@ -92,7 +113,7 @@ void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 {
-    m_warningFlags = 0x00;
+    m_warningFlags &= warningSensorLost;      // reset each bit except SensorLost-bit
     quint8 hlpB;
     m_firmwareVersion[0] = manufData.at(7) & 0xF8;
     m_firmwareVersion[0] >>= 3;
@@ -137,8 +158,11 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     decodeTemperature(manufData);
     decodeHumidity(manufData);
     decodeAirPressure(manufData);
-    if (!m_errorFlags)
+    if (!m_errorFlags) {
+        m_isConnected = true;
+        m_lastRecceivedTemperature = QTime::currentTime();
         emit sigNewValues();
+    }
     emit sigNewErrors();
 }
 
@@ -219,4 +243,12 @@ float EfentoEnvironmentSensor::zigzagConvert(quint32 zigzagVal, float divisor)
 void EfentoEnvironmentSensor::resetErrorFlags()
 {
     m_errorFlags = 0;
+}
+
+void EfentoEnvironmentSensor::resetMeasureValues()
+{
+    m_temperaturInC = qQNaN();
+    m_temperaturInF = qQNaN();
+    m_humidity = qQNaN();
+    m_airPressure = qQNaN();
 }
