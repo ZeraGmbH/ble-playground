@@ -21,25 +21,16 @@ void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress
 {
     m_address = validAddress;
 
-    m_periodicTimer = TimerFactoryQt::createPeriodic(5000);
-    connect(m_periodicTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::checkTimer);
-    m_periodicTimer->start();
+    m_timeoutTimer = TimerFactoryQt::createSingleShot(5000);
+    connect(m_timeoutTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::onTimeout);
 }
 
-void EfentoEnvironmentSensor::checkTimer()
+void EfentoEnvironmentSensor::onTimeout()
 {
-    if(!isConnected())          // only interesting if once connected to BLE sensor
-        return;
-    QTime aktTime = QTime::currentTime();
-    aktTime = aktTime.addSecs(-5);
-    if(aktTime > m_lastRecceivedTemperature) {
-        EfentoEnvironmentSensor::resetMeasureValues();
-        m_warningFlags |= warningSensorLost;
-        //qInfo("BLE Sensor lost");
-        emit sigNewValues();
-    }
-    else
-        m_warningFlags &= ~warningSensorLost;
+    EfentoEnvironmentSensor::resetMeasureValues();
+    m_warningFlags |= warningSensorLost;
+    qInfo("BLE Sensor lost");
+    emit sigNewValues();
 }
 
 void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
@@ -160,7 +151,8 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     decodeAirPressure(manufData);
     if (!m_errorFlags) {
         m_isConnected = true;
-        m_lastRecceivedTemperature = QTime::currentTime();
+        m_warningFlags &= ~warningSensorLost;
+        m_timeoutTimer->start();
         emit sigNewValues();
     }
     emit sigNewErrors();

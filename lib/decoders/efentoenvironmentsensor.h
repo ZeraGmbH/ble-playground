@@ -60,7 +60,7 @@ private:
     void handleInvalid(const QByteArray &manufData);
     void decodeAdvertiseValues(const QByteArray &manufData);
     void decodeMeasureValues(const QByteArray &manufData);
-    void checkTimer();
+    void onTimeout();
     void resetMeasureValues();
 
     QBluetoothAddress m_address;
@@ -73,9 +73,7 @@ private:
     float m_airPressure;
     QString m_lastCalibration;
     bool m_isConnected = false;
-    TimerTemplateQtPtr m_periodicTimer;
-    QTime m_lastRecceivedTemperature {0, 0, 0, 0};
-
+    TimerTemplateQtPtr m_timeoutTimer;
 };
 
 #endif // EFENTOENVIRONMENTSENSOR_H
