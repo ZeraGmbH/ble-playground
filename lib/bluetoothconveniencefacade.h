@@ -9,7 +9,7 @@ class BluetoothConvenienceFacade : public QObject
 {
     Q_OBJECT
 public:
-    BluetoothConvenienceFacade();
+    static BluetoothConvenienceFacade *getInstance();
     void start();
     void stop();
     bool isOn();
@@ -22,7 +22,10 @@ signals:
 private slots:
     void onOnOff(bool on);
 private:
+    BluetoothConvenienceFacade();
     void restartDiscoverer();
+
+    static BluetoothConvenienceFacade* m_instance;
     BluetoothOnOff m_bluetoothOnOff;
     BleDeviceDisoverer m_bleDiscoverer;
     BleDeviceInfoDispatcher m_bleDispatcher;
