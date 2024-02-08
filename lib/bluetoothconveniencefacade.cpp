@@ -1,5 +1,14 @@
 #include "bluetoothconveniencefacade.h"
 
+BluetoothConvenienceFacade* BluetoothConvenienceFacade::m_instance = nullptr;
+
+BluetoothConvenienceFacade *BluetoothConvenienceFacade::getInstance()
+{
+    if(m_instance == nullptr)
+        m_instance = new BluetoothConvenienceFacade();
+    return m_instance;
+}
+
 BluetoothConvenienceFacade::BluetoothConvenienceFacade()
 {
     connect(&m_bluetoothOnOff, &BluetoothOnOff::sigOnOff,
