@@ -15,7 +15,7 @@ static constexpr quint32 humidityMaxRawValue = 200;
 static constexpr quint16 airPressMaxRawValue = 40000;
 
 static constexpr quint8 frameSizeAdvertisment = 20;
-static constexpr quint8 frameSizeScanResponse = 13;
+static constexpr quint8 frameSizeScanResponse = 11;
 
 void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
@@ -214,7 +214,7 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData)
         }
     }
     else
-        m_errorFlags |= errorTypeSlot3;
+        m_airPressure = qQNaN();
 }
 
 float EfentoEnvironmentSensor::zigzagConvert(quint32 zigzagVal, float divisor)
