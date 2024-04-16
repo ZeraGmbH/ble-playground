@@ -139,13 +139,11 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     calibDate = calibDate.addDays(calibrationDay);
     m_lastCalibration = calibDate.toString("dd.MM.yyyy");
     emit sigNewWarnings();
-    qInfo("Received ASdvertise-Values..");
 }
 
 void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 {
     m_errorFlags = 0x00;
-    qInfo("Received Measure-Values..");
     decodeTemperature(manufData);
     decodeHumidity(manufData);
     decodeAirPressure(manufData);
