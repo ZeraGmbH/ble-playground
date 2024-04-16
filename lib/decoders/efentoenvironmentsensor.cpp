@@ -138,6 +138,7 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     QDate calibDate(1970, 1, 1);
     calibDate = calibDate.addDays(calibrationDay);
     m_lastCalibration = calibDate.toString("dd.MM.yyyy");
+    m_timeoutTimer->start();
     emit sigNewWarnings();
 }
 
