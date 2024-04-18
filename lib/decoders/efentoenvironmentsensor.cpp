@@ -143,6 +143,25 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     QTime time = QTime::currentTime();
     QString timeStr = time.toString("mm:ss");
     qInfo("%s;Received advert values", qPrintable(timeStr));
+
+    quint32 m_AdverrorFlags = 0;
+    if(manufData.at(1) != 0x28)                                         // check MAC.Adr. space
+        m_AdverrorFlags |= 1;
+    if(manufData.at(2) != 0x2C)
+        m_AdverrorFlags |= 2;
+    if(manufData.at(3) != 0x02)
+        m_AdverrorFlags |= 4;
+    if(manufData.at(4) != 0x41)
+        m_AdverrorFlags |= 8;
+    if((measurementPeriodBase < 15) || (measurementPeriodBase > 900))   // timbase 15s - 900s
+        m_AdverrorFlags |= 16;
+    if((manufData.at(16) != 0x00) || (manufData.at(17) != 0x01))        // period factor = 1
+        m_AdverrorFlags |= 32;
+    if(calibrationDay != 0)                                             // calibration date
+        m_AdverrorFlags |= 64;
+    if(m_AdverrorFlags)
+        qInfo("Error %d in decodeAdvertiseValues", m_AdverrorFlags);
+
     emit sigNewWarnings();
 }
 
@@ -161,6 +180,8 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         qInfo("%s;Received measure values", qPrintable(timeStr));
         emit sigNewValues();
     }
+    else
+        qInfo("Error %d in decodeMeasureValues", m_errorFlags);
     emit sigNewErrors();
 }
 
