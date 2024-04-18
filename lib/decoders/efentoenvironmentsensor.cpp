@@ -21,7 +21,7 @@ void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress
 {
     m_address = validAddress;
 
-    m_timeoutTimer = TimerFactoryQt::createSingleShot(10000);
+    m_timeoutTimer = TimerFactoryQt::createSingleShot(30000);
     connect(m_timeoutTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::onTimeout);
 }
 
@@ -30,6 +30,7 @@ void EfentoEnvironmentSensor::onTimeout()
     EfentoEnvironmentSensor::resetMeasureValues();
     m_warningFlags |= warningSensorLost;
     qInfo("BLE Sensor lost");
+    m_timeoutTimer->start();
     emit sigNewValues();
 }
 
@@ -139,6 +140,9 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     calibDate = calibDate.addDays(calibrationDay);
     m_lastCalibration = calibDate.toString("dd.MM.yyyy");
     m_timeoutTimer->start();
+    QTime time = QTime::currentTime();
+    QString timeStr = time.toString("mm:ss");
+    qInfo("%s;Received advert values", qPrintable(timeStr));
     emit sigNewWarnings();
 }
 
@@ -152,6 +156,9 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         m_isConnected = true;
         m_warningFlags &= ~warningSensorLost;
         m_timeoutTimer->start();
+        QTime time = QTime::currentTime();
+        QString timeStr = time.toString("mm:ss");
+        qInfo("%s;Received measure values", qPrintable(timeStr));
         emit sigNewValues();
     }
     emit sigNewErrors();
