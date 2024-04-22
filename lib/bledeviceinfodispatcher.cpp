@@ -1,4 +1,5 @@
 #include "bledeviceinfodispatcher.h"
+#include <QBluetoothAddress>
 
 BleDispatcherId BleDeviceInfoDispatcher::addBleDecoder(BluetoothDeviceInfoDecoderPtr decoder)
 {
@@ -32,9 +33,13 @@ void BleDeviceInfoDispatcher::onDeviceDiscovered(const QBluetoothDeviceInfo &dev
         iter.value()->decode(device);
 }
 
-void BleDeviceInfoDispatcher::onFinishedDiscovery()
+void BleDeviceInfoDispatcher::onFinishedDiscovery(QList<QBluetoothDeviceInfo> discoveredDevices)
 {
-    qInfo("Finished discovery !");
+    qInfo("Finished discovery ! %d devices discovered", discoveredDevices.count());
+    for(const QBluetoothDeviceInfo &device : discoveredDevices) {
+        //qInfo("Discovered : %s", qPrintable(device.address().toString()));
+        onDeviceDiscovered(device);
+    }
 }
 
 void BleDeviceInfoDispatcher::onErrorInDiscovery()
