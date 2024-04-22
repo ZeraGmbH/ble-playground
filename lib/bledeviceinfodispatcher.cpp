@@ -31,3 +31,13 @@ void BleDeviceInfoDispatcher::onDeviceDiscovered(const QBluetoothDeviceInfo &dev
     for(auto iter=m_decoders.cbegin(); iter!=m_decoders.cend(); iter++)
         iter.value()->decode(device);
 }
+
+void BleDeviceInfoDispatcher::onFinishedDiscovery()
+{
+    qInfo("Finished discovery !");
+}
+
+void BleDeviceInfoDispatcher::onErrorInDiscovery()
+{
+    qInfo("ERROR in discovery !");
+}

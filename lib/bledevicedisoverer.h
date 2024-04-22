@@ -12,6 +12,8 @@ public:
     void stop();
 signals:
     void sigDeviceDiscovered(const QBluetoothDeviceInfo &device);
+    void onFinishedDiscovery();
+    void onErrorInDiscovery();
 private:
     QBluetoothDeviceDiscoveryAgent m_deviceDiscoveryAgent;
 

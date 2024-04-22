@@ -15,7 +15,8 @@ public:
     BluetoothDeviceInfoDecoderPtr findBleDecoder(BleDispatcherId idReturnedOnAdd);
 public slots:
     void onDeviceDiscovered(const QBluetoothDeviceInfo &device);
-
+    void onFinishedDiscovery();
+    void onErrorInDiscovery();
 private:
     QHash<int, BluetoothDeviceInfoDecoderPtr> m_decoders;
 };

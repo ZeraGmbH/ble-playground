@@ -15,6 +15,10 @@ BluetoothConvenienceFacade::BluetoothConvenienceFacade()
             this, &BluetoothConvenienceFacade::onOnOff);
     connect(&m_bleDiscoverer, &BleDeviceDisoverer::sigDeviceDiscovered,
             &m_bleDispatcher, &BleDeviceInfoDispatcher::onDeviceDiscovered);
+    connect(&m_bleDiscoverer, &BleDeviceDisoverer::onFinishedDiscovery,
+            &m_bleDispatcher, &BleDeviceInfoDispatcher::onFinishedDiscovery);
+    connect(&m_bleDiscoverer, &BleDeviceDisoverer::onErrorInDiscovery,
+            &m_bleDispatcher, &BleDeviceInfoDispatcher::onErrorInDiscovery);
 }
 
 void BluetoothConvenienceFacade::restartDiscoverer()
