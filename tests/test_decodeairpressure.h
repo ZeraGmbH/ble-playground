@@ -9,6 +9,7 @@ class test_decodeAirPressure : public QObject
 private slots:
     void test_500hPaAirPressure();
     void test_minus500hPaAirPressure();
+    void test_airPressureMinMaxRaw();
 };
 
 #endif // TEST_DECODEAIRPRESSURE_H
