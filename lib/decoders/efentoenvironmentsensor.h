@@ -62,6 +62,7 @@ private:
     void decodeMeasureValues(const QByteArray &manufData);
     void onTimeout();
     void resetMeasureValues();
+    bool isParameterPresent(const QByteArray &manufData, quint8 manufDataIndex, quint8 parameterID);
 
     QBluetoothAddress m_address;
     quint32 m_errorFlags;

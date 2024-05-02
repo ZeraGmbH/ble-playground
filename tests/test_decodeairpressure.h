@@ -10,6 +10,7 @@ private slots:
     void test_500hPaAirPressure();
     void test_minus500hPaAirPressure();
     void test_airPressureMinMaxRaw();
+    void test_crcMisunderstoodAsAirPressure();
 };
 
 #endif // TEST_DECODEAIRPRESSURE_H

@@ -65,3 +65,16 @@ void test_decodeAirPressure::test_airPressureMinMaxRaw()
     sensor.decodeAirPressureTest(ba);
     QCOMPARE(sensor.getAirPressure(), 0);
 }
+
+void test_decodeAirPressure::test_crcMisunderstoodAsAirPressure()
+{
+    QByteArray ba = QByteArray("\x04\x01\x00\x01\xB4\x02\x00\x00\x3A\x03\x5F\xCF", 12);
+    QBluetoothDeviceInfo testSensorInfo(QBluetoothAddress("28:2C:02:41:8C:B1"), "foo", 0);
+    testSensorInfo.setManufacturerData(0x026C, ba);
+
+    EfentoEnvironmentSensorTest sensor;
+    sensor.setBluetoothAddress(QBluetoothAddress("28:2C:02:41:8C:B1"));
+    sensor.resetErrorFlagsTest();
+    sensor.decode(testSensorInfo);
+    QCOMPARE(sensor.getAirPressure(), qQNaN());
+}
