@@ -15,7 +15,7 @@ static constexpr quint32 tempMaxRawValue = 80000;
 static constexpr quint32 humidityMaxRawValue = 200;
 static constexpr quint16 airPressMaxRawValue = 40000;
 
-static constexpr quint8 ending_bytes_to_ignore = 3;
+static constexpr quint8 ending_bytes_to_ignore = 2;
 static constexpr quint8 frameSizeAdvertisment = 20 - ending_bytes_to_ignore;
 static constexpr quint8 frameSizeScanResponse = 11 - ending_bytes_to_ignore;
 
