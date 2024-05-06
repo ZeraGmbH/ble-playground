@@ -6,8 +6,12 @@
 static constexpr qint16 ManufId = 0x026C;
 
 static constexpr quint8 measurementPeriodBaseZera = 15;
+
+static constexpr quint8 posSensorTypeTemperatur = 1;
 static constexpr quint8 sensorTypeTemperatur = 1;
+static constexpr quint8 posSensorTypeHumidity = 5;
 static constexpr quint8 sensorTypeHumidity = 2;
+static constexpr quint8 posSensorTypeAirPressure = 9;
 static constexpr quint8 sensorTypeAirPressure = 3;
 static constexpr quint8 parameterDataBytes = 3;
 
@@ -41,7 +45,7 @@ void EfentoEnvironmentSensor::decode(const QBluetoothDeviceInfo &info)
 {
     if (info.address() == m_address) {
         QByteArray manufData = info.manufacturerData(ManufId);
-        //Last 3 bytes are CRC(2 bytes) + 1 unknown byte
+        // Last 2 bytes are CRC
         manufData.remove(manufData.size()-ending_bytes_to_ignore, ending_bytes_to_ignore);
         if(isValidAdvertismentFrame(manufData)) {
             decodeAdvertiseValues(manufData);
@@ -144,10 +148,8 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     QDate calibDate(1970, 1, 1);
     calibDate = calibDate.addDays(calibrationDay);
     m_lastCalibration = calibDate.toString("dd.MM.yyyy");
+    qInfo("Last Calibration: %s", qPrintable(m_lastCalibration));
     m_timeoutTimer->start();
-    QTime time = QTime::currentTime();
-    QString timeStr = time.toString("mm:ss");
-    qInfo("%s;Received advert values", qPrintable(timeStr));
     emit sigNewWarnings();
 }
 
@@ -161,9 +163,6 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         m_isConnected = true;
         m_warningFlags &= ~warningSensorLost;
         m_timeoutTimer->start();
-        QTime time = QTime::currentTime();
-        QString timeStr = time.toString("mm:ss");
-        qInfo("%s;Received measure values", qPrintable(timeStr));
         emit sigNewValues();
     }
     else
@@ -173,7 +172,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)
 {
-    if (isParameterPresent(manufData, 1, sensorTypeTemperatur)) {
+    if (isParameterPresent(manufData, posSensorTypeTemperatur, sensorTypeTemperatur)) {
         quint32 temperatureRaw = (quint8)manufData.at(2);
         temperatureRaw <<= 8;
         temperatureRaw += (quint8)manufData.at(3);
@@ -192,7 +191,7 @@ void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData)
 {
-    if (isParameterPresent(manufData, 5, sensorTypeHumidity)) {
+    if (isParameterPresent(manufData, posSensorTypeHumidity, sensorTypeHumidity)) {
         quint32 humidityRaw = (quint8)manufData.at(6);
         humidityRaw <<= 8;
         humidityRaw += (quint8)manufData.at(7);
@@ -212,7 +211,7 @@ void EfentoEnvironmentSensor::decodeHumidity(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData)
 {
-    if (isParameterPresent(manufData, 9, sensorTypeAirPressure)) {
+    if (isParameterPresent(manufData, posSensorTypeAirPressure, sensorTypeAirPressure)) {
         quint32 airPressunreRaw = (quint8)manufData.at(10);
         airPressunreRaw <<= 8;
         airPressunreRaw += (quint8)manufData.at(11);
