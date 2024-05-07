@@ -147,8 +147,10 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         m_warningFlags |= warningNoCalibDateSet;
     QDate calibDate(1970, 1, 1);
     calibDate = calibDate.addDays(calibrationDay);
-    m_lastCalibration = calibDate.toString("dd.MM.yyyy");
-    qInfo("Last Calibration: %s", qPrintable(m_lastCalibration));
+    if (m_lastCalibration.isEmpty()) {
+        m_lastCalibration = calibDate.toString("dd.MM.yyyy");
+        qInfo("Last Calibration: %s", qPrintable(m_lastCalibration));
+    }
     m_timeoutTimer->start();
     emit sigNewWarnings();
 }
