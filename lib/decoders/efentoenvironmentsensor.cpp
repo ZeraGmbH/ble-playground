@@ -125,11 +125,11 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     m_firmwareVersion[1] |= hlpB;
     m_firmwareVersion[2] = manufData.at(8) & 0x1F;
     if (!(manufData.at(9) & 0x01)) {
-        qInfo("Sensor battery low detect");
+        qInfo("BLE Sensor battery low detect");
         m_warningFlags |= warningLowBattery;
     }
     if (manufData.at(9) & 0x08) {
-        qInfo("Encryption enabled");
+        qInfo("BLE Sensor Encryption enabled");
         m_warningFlags |= warningEncryptionEnabled;
     }
     quint16 measurementPeriodBase = manufData.at(14);
@@ -149,7 +149,7 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     calibDate = calibDate.addDays(calibrationDay);
     if (m_lastCalibration.isEmpty()) {
         m_lastCalibration = calibDate.toString("dd.MM.yyyy");
-        qInfo("Last Calibration: %s", qPrintable(m_lastCalibration));
+        qInfo("BLE Sensor last Calibration: %s", qPrintable(m_lastCalibration));
     }
     m_timeoutTimer->start();
     emit sigNewWarnings();
@@ -168,7 +168,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         emit sigNewValues();
     }
     else
-        qInfo("Error %d in decodeMeasureValues", m_errorFlags);
+        qInfo("BLE Sensor error %d in decodeMeasureValues", m_errorFlags);
     emit sigNewErrors();
 }
 
@@ -221,13 +221,13 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData)
         airPressunreRaw += (quint8)manufData.at(12);
         if (airPressunreRaw > airPressMaxRawValue) {
             m_airPressure = qQNaN();
-            qInfo("decodeAirPressure -> errorAirPressExceedRange");
+            qInfo("BLE Sensor decodeAirPressure -> errorAirPressExceedRange");
         }
         else {
             m_airPressure = zigzagConvert(airPressunreRaw, 10.0);
             if (m_airPressure < 0) {
                 m_airPressure = qQNaN();
-                qInfo("decodeAirPressure -> errorAirPressValueNegtive");
+                qInfo("BLE Sensor decodeAirPressure -> errorAirPressValueNegtive");
             }
         }
     }
