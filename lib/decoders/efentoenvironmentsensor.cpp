@@ -63,24 +63,40 @@ bool EfentoEnvironmentSensor::isConnected()
     return m_isConnected;
 }
 
-float EfentoEnvironmentSensor::getTemperaturInC()
+double EfentoEnvironmentSensor::getTemperaturInC()
 {
-    return m_temperaturInC;
+    double d_temperaturInC = (double)m_temperaturInC;
+    d_temperaturInC *= 100.0;
+    d_temperaturInC = qRound64(d_temperaturInC);
+    d_temperaturInC /= 100.0;
+    return d_temperaturInC;
 }
 
-float EfentoEnvironmentSensor::getTemperaturInF()
+double EfentoEnvironmentSensor::getTemperaturInF()
 {
-    return m_temperaturInF;
+    double d_temperaturInF = (double)m_temperaturInF;
+    d_temperaturInF *= 100.0;
+    d_temperaturInF = qRound64(d_temperaturInF);
+    d_temperaturInF /= 100.0;
+    return d_temperaturInF;
 }
 
-float EfentoEnvironmentSensor::getHumidity()
+double EfentoEnvironmentSensor::getHumidity()
 {
-    return m_humidity;
+    double d_humidity = (double)m_humidity;
+    d_humidity *= 100.0;
+    d_humidity = qRound64(d_humidity);
+    d_humidity /= 100.0;
+    return d_humidity;
 }
 
-float EfentoEnvironmentSensor::getAirPressure()
+double EfentoEnvironmentSensor::getAirPressure()
 {
-    return m_airPressure;
+    double d_airPressure = (double)m_airPressure;
+    d_airPressure *= 100.0;
+    d_airPressure = qRound64(d_airPressure);
+    d_airPressure /= 100.0;
+    return d_airPressure;
 }
 
 quint32 EfentoEnvironmentSensor::getErrorFlags()
