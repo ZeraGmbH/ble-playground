@@ -35,10 +35,10 @@ public:
     static constexpr quint32 warningSensorLost = 1<<5;
 
     bool isConnected();
-    float getTemperaturInC();
-    float getTemperaturInF();
-    float getHumidity();
-    float getAirPressure();
+    double getTemperaturInC();
+    double getTemperaturInF();
+    double getHumidity();
+    double getAirPressure();
     quint32 getErrorFlags();
     quint32 getWarningFlags();
 signals:
