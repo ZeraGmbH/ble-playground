@@ -14,7 +14,10 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-find_package(Qt5 COMPONENTS Core Network Bluetooth Test REQUIRED)
+set(QT_MAJOR_VER "5" CACHE STRING "Qt major version")
+set(QTX "Qt${QT_MAJOR_VER}")
+
+find_package(${QTX} COMPONENTS Core Network Bluetooth Test REQUIRED)
 find_package(ZenuxCore REQUIRED)
 
 enable_testing()
@@ -32,7 +35,7 @@ function(SETUP_QTESTS)
             )
         target_link_libraries(${_testname}
             PUBLIC
-            Qt5::Test
+            ${QTX}::Test
             ble-sensors-testlib
             )
     endforeach()

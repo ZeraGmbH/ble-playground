@@ -15,8 +15,8 @@ add_library(ble-sensors SHARED
 
 target_link_libraries(ble-sensors
     PUBLIC
-    Qt5::Core
-    Qt5::Bluetooth
+    ${QTX}::Core
+    ${QTX}::Bluetooth
     Zera::zera-timers
     )
 

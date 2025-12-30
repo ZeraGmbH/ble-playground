@@ -1,6 +1,9 @@
 include(CMakeFindDependencyMacro)
 
-find_dependency(Qt5 COMPONENTS Core Bluetooth CONFIG REQUIRED)
+if("${QT_MAJOR_VER}" STREQUAL "6")
+    find_dependency(Qt6 COMPONENTS Core Bluetooth CONFIG REQUIRED)
+else()
+    find_dependency(Qt5 COMPONENTS Core Bluetooth CONFIG REQUIRED)
+endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/BlePlaygroundTargets.cmake")
-

@@ -13,7 +13,7 @@ add_executable(ble-playground-app
 
 target_link_libraries(ble-playground-app
     PRIVATE
-    Qt5Core
+    ${QTX}::Core
     ble-sensors
 )
 
