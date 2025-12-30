@@ -289,5 +289,5 @@ void EfentoEnvironmentSensor::resetMeasureValues()
 
 bool EfentoEnvironmentSensor::isParameterPresent(const QByteArray &manufData, quint8 manufDataIndex, quint8 parameterID)
 {
-    return (manufData.count() > manufDataIndex + parameterDataBytes) && (manufData.at(manufDataIndex) == parameterID);
+    return (manufData.size() > manufDataIndex + parameterDataBytes) && (manufData.at(manufDataIndex) == parameterID);
 }
