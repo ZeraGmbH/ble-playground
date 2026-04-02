@@ -24,6 +24,11 @@ static constexpr quint8 frameSizeAdvertisment = 20 - ending_bytes_to_ignore;
 static constexpr quint8 frameSizeScanResponse = 11 - ending_bytes_to_ignore;
 
 
+EfentoEnvironmentSensor::EfentoEnvironmentSensor() :
+    m_firmwareVersion(3, 0)
+{
+}
+
 void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
     m_address = validAddress;

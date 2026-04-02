@@ -4,12 +4,14 @@
 #include "bluetoothdeviceinfodecoder.h"
 #include <QtBluetooth/QBluetoothDeviceDiscoveryAgent>
 #include <timerfactoryqt.h>
+#include <QVector>
 #include <QDateTime>
 
 class EfentoEnvironmentSensor : public BluetoothDeviceInfoDecoder
 {
     Q_OBJECT
 public:
+    EfentoEnvironmentSensor();
     void setBluetoothAddress(QBluetoothAddress validAddress);
     void decode(const QBluetoothDeviceInfo &info) override;
 
@@ -66,13 +68,13 @@ private:
 
     QBluetoothAddress m_address;
     QString m_serialNo;
-    quint32 m_errorFlags;
-    quint32 m_warningFlags;
-    quint8 m_firmwareVersion[3];
-    float m_temperaturInC;
-    float m_temperaturInF;
-    float m_humidity;
-    float m_airPressure;
+    quint32 m_errorFlags = 0;
+    quint32 m_warningFlags = 0;
+    QVector<quint8> m_firmwareVersion;
+    float m_temperaturInC = 0.0;
+    float m_temperaturInF = 0.0;
+    float m_humidity = 0.0;
+    float m_airPressure = 0.0;
     QString m_lastCalibration;
     bool m_isConnected = false;
     TimerTemplateQtPtr m_timeoutTimer;
