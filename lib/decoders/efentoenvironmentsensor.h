@@ -43,7 +43,6 @@ public:
     quint32 getErrorFlags();
     quint32 getWarningFlags();
 signals:
-    void sigChangeConnectState();
     void sigNewValues();
     void sigNewWarnings();
     void sigNewErrors();

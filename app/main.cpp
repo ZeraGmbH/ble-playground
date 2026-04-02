@@ -16,9 +16,6 @@ int main(int argc, char *argv[])
     efentoSensor->setBluetoothAddress(QBluetoothAddress("28:2C:02:41:8C:B1"));
     bleDispatcher.addBleDecoder(efentoSensor);
 
-    a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigChangeConnectState, [&efentoSensor]() {
-        qInfo(efentoSensor->isConnected() ? "Connected" : "Disonnected");
-    });
     a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigNewValues, [&efentoSensor]() {
 //        qInfo("Temperatur [°]: %f", efentoSensor->getTemperaturInC());
 //        qInfo("Temperatur [F]: %f", efentoSensor->getTemperaturInF());
