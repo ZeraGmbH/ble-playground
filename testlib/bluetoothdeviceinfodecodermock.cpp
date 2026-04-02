@@ -4,7 +4,7 @@ BluetoothDeviceInfoDecoderMock::BluetoothDeviceInfoDecoderMock()
 {
 }
 
-void BluetoothDeviceInfoDecoderMock::setName(QString name)
+void BluetoothDeviceInfoDecoderMock::setName(const QString &name)
 {
     m_name = name;
 }

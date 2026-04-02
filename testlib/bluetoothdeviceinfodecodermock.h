@@ -8,7 +8,7 @@ class BluetoothDeviceInfoDecoderMock : public BluetoothDeviceInfoDecoder
     Q_OBJECT
 public:
     BluetoothDeviceInfoDecoderMock();
-    void setName(QString name);
+    void setName(const QString &name);
     QString getName();
     void decode(const QBluetoothDeviceInfo &info) override;
     int getDecodeCount();

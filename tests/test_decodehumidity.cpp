@@ -1,5 +1,4 @@
 #include "test_decodehumidity.h"
-#include "efentoenvironmentsensor.h"
 #include "efentoenvironmentsensortest.h"
 #include <QTest>
 #include <QByteArray>
@@ -16,7 +15,6 @@ void test_decodeHumidity::test_10PercentHumidity()
     ba[8] = 0x14;
 
     EfentoEnvironmentSensorTest sensor;
-    bool valChange = false;
     sensor.decodeHumidityTest(ba);
     QCOMPARE(sensor.getHumidity(), 10.0);
 }
