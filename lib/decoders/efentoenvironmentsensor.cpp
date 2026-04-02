@@ -27,6 +27,11 @@ static constexpr quint8 frameSizeScanResponse = 11 - ending_bytes_to_ignore;
 void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress)
 {
     m_address = validAddress;
+    // Advertising messages are rare an can cause huge delays
+    // => start with serial number from MAC
+    QString rawAddress = validAddress.toString().toUpper();
+    rawAddress.remove(":");
+    m_serialNo = rawAddress;
 
     m_timeoutTimer = TimerFactoryQt::createSingleShot(30000);
     connect(m_timeoutTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::onTimeout);
@@ -34,7 +39,7 @@ void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress
 
 void EfentoEnvironmentSensor::onTimeout()
 {
-    EfentoEnvironmentSensor::resetMeasureValues();
+    resetMeasureValues();
     m_warningFlags |= warningSensorLost;
     qInfo("BLE Sensor lost");
     m_timeoutTimer->start();
