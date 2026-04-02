@@ -63,6 +63,11 @@ bool EfentoEnvironmentSensor::isConnected()
     return m_isConnected;
 }
 
+const QString &EfentoEnvironmentSensor::getSerialNo() const
+{
+    return m_serialNo;
+}
+
 double EfentoEnvironmentSensor::getTemperaturInC()
 {
     if(qIsNaN(m_temperaturInC))
@@ -131,6 +136,12 @@ bool EfentoEnvironmentSensor::isValidScanResponseFrame(const QByteArray &manufDa
     return false;
 }
 
+void EfentoEnvironmentSensor::decodeSerialNo(const QByteArray &advertiseData)
+{
+    QByteArray serNoRaw = advertiseData.mid(1, 6);
+    m_serialNo = serNoRaw.toHex().toUpper();
+}
+
 void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 {
     qWarning("Efento: Unknown manufactoring data: %i", manufData.at(0));
@@ -138,8 +149,14 @@ void EfentoEnvironmentSensor::handleInvalid(const QByteArray &manufData)
 
 void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
 {
+    // Details found in [1] / index 0 is Byte 3 in [1]
+    // [1] https://docs.efento.io/efento-ble-loggers/integration/bluetooth-advertisement-decoding
+
     m_warningFlags &= warningSensorLost;      // reset each bit except SensorLost-bit
     quint8 hlpB;
+
+    decodeSerialNo(manufData);
+
     m_firmwareVersion[0] = manufData.at(7) & 0xF8;
     m_firmwareVersion[0] >>= 3;
     m_firmwareVersion[1] = manufData.at(8);

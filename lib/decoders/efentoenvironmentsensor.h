@@ -35,6 +35,7 @@ public:
     static constexpr quint32 warningSensorLost = 1<<5;
 
     bool isConnected();
+    const QString &getSerialNo() const;
     double getTemperaturInC();
     double getTemperaturInF();
     double getHumidity();
@@ -50,6 +51,7 @@ signals:
 protected:
     bool isValidAdvertismentFrame(const QByteArray &manufData);
     bool isValidScanResponseFrame(const QByteArray &manufData);
+    void decodeSerialNo(const QByteArray &advertiseData);
     void decodeTemperature(const QByteArray &manufData);
     void decodeHumidity(const QByteArray &manufData);
     void decodeAirPressure(const QByteArray &manufData);
@@ -65,6 +67,7 @@ private:
     bool isParameterPresent(const QByteArray &manufData, quint8 manufDataIndex, quint8 parameterID);
 
     QBluetoothAddress m_address;
+    QString m_serialNo;
     quint32 m_errorFlags;
     quint32 m_warningFlags;
     quint8 m_firmwareVersion[3];
