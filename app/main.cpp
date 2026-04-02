@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     bleDispatcher.addBleDecoder(std::make_shared<BluetoothSniffer>());
 
     std::shared_ptr<EfentoEnvironmentSensor> efentoSensor = std::make_shared<EfentoEnvironmentSensor>();
-    efentoSensor->setBluetoothAddress(QBluetoothAddress("28:2C:02:41:8C:B1"));
+    efentoSensor->setBluetoothAddress(QBluetoothAddress("28:2C:02:41:DF:20"));
     bleDispatcher.addBleDecoder(efentoSensor);
 
     a.connect(efentoSensor.get(), &EfentoEnvironmentSensor::sigNewValues, [&efentoSensor]() {
