@@ -193,7 +193,7 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
         qInfo("BLE Sensor last Calibration: %s", qPrintable(m_lastCalibration));
     }
     m_timeoutTimer->start();
-    emit sigNewWarnings();
+    emit sigNewDeviceInfo();
 }
 
 void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
@@ -210,7 +210,6 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
     }
     else
         qInfo("BLE Sensor error %d in decodeMeasureValues", m_errorFlags);
-    emit sigNewErrors();
 }
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)

@@ -43,9 +43,8 @@ public:
     quint32 getErrorFlags();
     quint32 getWarningFlags();
 signals:
+    void sigNewDeviceInfo();
     void sigNewValues();
-    void sigNewWarnings();
-    void sigNewErrors();
 
 protected:
     bool isValidAdvertismentFrame(const QByteArray &manufData);
