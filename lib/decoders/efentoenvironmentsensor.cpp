@@ -38,7 +38,7 @@ void EfentoEnvironmentSensor::setBluetoothAddress(QBluetoothAddress validAddress
     rawAddress.remove(":");
     m_serialNo = rawAddress;
 
-    m_timeoutTimer = TimerFactoryQt::createSingleShot(30000);
+    m_timeoutTimer = TimerFactoryQt::createSingleShot(60 * 1000);
     connect(m_timeoutTimer.get(), &TimerTemplateQt::sigExpired, this, &EfentoEnvironmentSensor::onTimeout);
 }
 
