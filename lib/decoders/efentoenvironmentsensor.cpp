@@ -46,7 +46,7 @@ void EfentoEnvironmentSensor::onTimeout()
 {
     resetMeasureValues();
     m_warningFlags |= warningSensorLost;
-    qInfo("BLE Sensor lost");
+    qWarning("BLE Sensor lost");
     m_timeoutTimer->start();
     emit sigNewValues();
 }
@@ -176,7 +176,7 @@ void EfentoEnvironmentSensor::decodeAdvertiseValues(const QByteArray &manufData)
     m_firmwareVersion[1] |= hlpB;
     m_firmwareVersion[2] = manufData.at(8) & 0x1F;
     if (!(manufData.at(9) & 0x01)) {
-        qInfo("BLE Sensor battery low detect");
+        qWarning("BLE Sensor battery low detect");
         m_warningFlags |= warningLowBattery;
     }
     if (manufData.at(9) & 0x08) {
@@ -219,7 +219,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         emit sigNewValues();
     }
     else
-        qInfo("BLE Sensor error %d in decodeMeasureValues", m_errorFlags);
+        qWarning("BLE Sensor error %d in decodeMeasureValues", m_errorFlags);
 }
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)
@@ -271,13 +271,13 @@ void EfentoEnvironmentSensor::decodeAirPressure(const QByteArray &manufData)
         airPressunreRaw += (quint8)manufData.at(12);
         if (airPressunreRaw > airPressMaxRawValue) {
             m_airPressure = qQNaN();
-            qInfo("BLE Sensor decodeAirPressure -> errorAirPressExceedRange");
+            qWarning("BLE Sensor decodeAirPressure -> errorAirPressExceedRange");
         }
         else {
             m_airPressure = zigzagConvert(airPressunreRaw, 10.0);
             if (m_airPressure < 0) {
                 m_airPressure = qQNaN();
-                qInfo("BLE Sensor decodeAirPressure -> errorAirPressValueNegtive");
+                qWarning("BLE Sensor decodeAirPressure -> errorAirPressValueNegtive");
             }
         }
     }
