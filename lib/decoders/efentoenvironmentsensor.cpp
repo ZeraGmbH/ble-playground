@@ -219,7 +219,7 @@ void EfentoEnvironmentSensor::decodeMeasureValues(const QByteArray &manufData)
         emit sigNewValues();
     }
     else
-        qWarning("BLE Sensor error %d in decodeMeasureValues", m_errorFlags);
+        qWarning("BLE Sensor error 0x%08X in decodeMeasureValues", m_errorFlags);
 }
 
 void EfentoEnvironmentSensor::decodeTemperature(const QByteArray &manufData)
