@@ -1,10 +1,18 @@
 #include "bluetoothonoff.h"
+#include <QCoreApplication>
 
-BluetoothOnOff::BluetoothOnOff():
+BluetoothOnOff::BluetoothOnOff() :
     m_on(m_bluetoothDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
 {
-    if(!m_bluetoothDevice.isValid())
-        qWarning("Invalid Bluetooth local device!");
+    if(!m_bluetoothDevice.isValid()) {
+        const QString appName = QCoreApplication::applicationName().toLower();
+        const QString errMsg = "Invalid Bluetooth local device!";
+        // Tests can miss bluetooth / production must support
+        if (appName.contains("test"))
+            qWarning("%s", qPrintable(errMsg));
+        else
+            qCritical("%s", qPrintable(errMsg));
+    }
     connect(&m_bluetoothDevice, &QBluetoothLocalDevice::hostModeStateChanged,
             this, &BluetoothOnOff::onHostModeChanged);
 }
