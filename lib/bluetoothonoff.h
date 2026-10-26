@@ -13,7 +13,7 @@ public:
     BluetoothOnOff();
 
     static constexpr int WaitToStartPollTimeMs = 500;
-    static constexpr int WaitToStartTimeoutMs = 30*1000;
+    static constexpr int WaitToStartTimeoutMs = 600*1000;
 
     void switchOn();
     void switchOff();
