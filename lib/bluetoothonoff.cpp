@@ -20,7 +20,9 @@
 //    'Local Bluetooth device did not come up!'. This message should be spawned
 //    ~WaitToStartTimeoutMs after ble-module was started.
 // 3. Bluetooth comes up while polling - monkey work - sigh:
-//    * compile kernel with CONFIG_BT_HCIUART_LL=m
+//    * compile kernel with CONFIG_BT_HCIUART=m
+//    ATTOW this is good enough so that firmware is loaded after ble-module.
+//    If not:
 //    * compile ble-playground with WaitToStartTimeoutMs = 600*1000 to have time
 //    * on target:
 //      * su
