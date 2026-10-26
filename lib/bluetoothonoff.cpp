@@ -1,6 +1,36 @@
 #include "bluetoothonoff.h"
 #include <QCoreApplication>
 
+// This class
+// * controls Bluetooth on/off state
+// * since there are rare cases on which kernel needs three attempts to upload
+//   firmware which makes device avaliable after zera-classes' ble-module is
+//   loaded
+//   => If no device found it starts polling for Bluetooth device and gives up
+//   after exceeding WaitToStartTimeoutMs
+//
+// We found no way yet to get tests close to target conditions (in all our
+// build environments) so unfortunately manual testing is necessary.
+//
+// For the wait/poll there are 3 possible conditions
+// 1. Bluetooth comes up early: This is the 99% case on target and just needs
+//    checks in logs for 'Local Bluetooth device is up.'
+// 2. Bluetooth comes up never or after timeout. This can be provoked by
+//    systemctl disable bluetooth.service & reboot & check logs for
+//    'Local Bluetooth device did not come up!'. This message should be spawned
+//    ~WaitToStartTimeoutMs after ble-module was started.
+// 3. Bluetooth comes up while polling - monkey work - sigh:
+//    * compile kernel with CONFIG_BT_HCIUART_LL=m
+//    * compile ble-playground with WaitToStartTimeoutMs = 600*1000 to have time
+//    * on target:
+//      * su
+//      * echo "blacklist hci_uart" > /etc/modprobe.d/99-no-bt-early.conf
+//      * reboot
+//      * su
+//      * modprobe hci_uart
+//      * checks in logs for 'Local Bluetooth device is up.' it should be much lather than
+//        ble-module start
+
 BluetoothOnOff::BluetoothOnOff()
 {
     if (!checkLocalBluetoothLoaded())
