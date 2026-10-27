@@ -105,14 +105,14 @@ void BluetoothOnOff::onHostModeChanged(QBluetoothLocalDevice::HostMode mode)
 
 bool BluetoothOnOff::tryCreateNewLocalDevice(const QBluetoothAddress &blueAddr)
 {
-    m_bluetoothLocalDevice = std::make_unique<QBluetoothLocalDevice>(blueAddr);
-    if (m_bluetoothLocalDevice->isValid()) {
+    QBluetoothLocalDevice localDeviceForCheckOnly(blueAddr);
+    if (localDeviceForCheckOnly.isValid()) {
         qInfo("Local Bluetooth device is up.");
+        m_bluetoothLocalDevice = std::make_unique<QBluetoothLocalDevice>(blueAddr);
         connect(m_bluetoothLocalDevice.get(), &QBluetoothLocalDevice::hostModeStateChanged,
                 this, &BluetoothOnOff::onHostModeChanged);
         return true;
     };
-    m_bluetoothLocalDevice.reset();
     return false;
 }
 
